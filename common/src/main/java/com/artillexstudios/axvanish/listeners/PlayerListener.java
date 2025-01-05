@@ -4,6 +4,8 @@ import com.artillexstudios.axapi.utils.MessageUtils;
 import com.artillexstudios.axapi.utils.StringUtils;
 import com.artillexstudios.axvanish.AxVanishPlugin;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
+import com.artillexstudios.axvanish.api.context.VanishContext;
+import com.artillexstudios.axvanish.api.context.source.ForceVanishSource;
 import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.config.Language;
 import com.artillexstudios.axvanish.exception.UserAlreadyLoadedException;
@@ -39,7 +41,10 @@ public final class PlayerListener implements Listener {
         Player player = event.getPlayer();
         User user = AxVanishAPI.instance().userOrThrow(player);
         if (user.vanished() && !player.hasPermission("axvanish.vanish")) {
-            user.update(false);
+            user.update(false, new VanishContext.Builder()
+                    .withSource(ForceVanishSource.INSTANCE)
+                    .build()
+            );
             Component message = StringUtils.format(Language.prefix + Language.unVanish.hadNoVanishPermission);
             for (User vanished : AxVanishAPI.instance().vanished()) {
                 vanished.message(message);

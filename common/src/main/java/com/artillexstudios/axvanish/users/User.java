@@ -2,6 +2,7 @@ package com.artillexstudios.axvanish.users;
 
 import com.artillexstudios.axapi.nms.NMSHandlers;
 import com.artillexstudios.axvanish.api.context.VanishContext;
+import com.artillexstudios.axvanish.api.context.source.ForceVanishSource;
 import com.artillexstudios.axvanish.api.event.UserPreVanishStateChangeEvent;
 import com.artillexstudios.axvanish.api.event.UserVanishStateChangeEvent;
 import net.kyori.adventure.text.Component;
@@ -29,7 +30,7 @@ public class User implements com.artillexstudios.axvanish.api.users.User {
     @Override
     public boolean update(boolean vanished, VanishContext context) {
         UserPreVanishStateChangeEvent event = new UserPreVanishStateChangeEvent(this, this.vanished, vanished, context);
-        if (event.call()) {
+        if (event.call() || context.getSource(ForceVanishSource.class) != null) {
             boolean prev = this.vanished;
             this.vanished = vanished;
             new UserVanishStateChangeEvent(this, prev, vanished, context).call();
