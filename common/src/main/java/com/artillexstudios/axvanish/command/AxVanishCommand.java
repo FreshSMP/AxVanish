@@ -9,7 +9,9 @@ import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.config.Config;
 import com.artillexstudios.axvanish.config.Language;
 import dev.jorel.commandapi.CommandTree;
+import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.LiteralArgument;
+import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 
@@ -50,6 +52,29 @@ public final class AxVanishCommand {
                         MessageUtils.sendMessage(sender, Language.prefix, Language.vanish.vanish);
                     }
                 })
+                .then(new LiteralArgument("toggle")
+                        .withPermission("axvanish.command.toggle.other")
+                        .then(new OfflinePlayerArgument("player")
+                                .withPermission("axvanish.command.toggle.other")
+
+                        )
+                )
+                .then(new LiteralArgument("set")
+                        .withPermission("axvanish.command.set")
+                        .then(new OfflinePlayerArgument("player")
+                                .withPermission("axvanish.command.set.other")
+                                .then(new BooleanArgument("enabled")
+                                        .executes((sender, args) -> {
+
+                                        })
+                                )
+                        )
+                        .then(new BooleanArgument("enabled")
+                                .executes((sender, args) -> {
+
+                                })
+                        )
+                )
                 .then(new LiteralArgument("admin")
                         .withPermission("axvanish.command.admin")
                         .then(new LiteralArgument("version")

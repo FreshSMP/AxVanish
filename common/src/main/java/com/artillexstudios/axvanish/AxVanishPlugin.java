@@ -5,10 +5,12 @@ import com.artillexstudios.axapi.metrics.AxMetrics;
 import com.artillexstudios.axapi.utils.featureflags.FeatureFlags;
 import com.artillexstudios.axvanish.config.Config;
 import com.artillexstudios.axvanish.config.Language;
+import com.artillexstudios.axvanish.utils.VanishStateManager;
 
 public final class AxVanishPlugin extends AxPlugin {
     private static AxVanishPlugin instance;
     private AxMetrics metrics;
+    private VanishStateManager stateManager;
 
     @Override
     public void updateFlags(FeatureFlags flags) {
@@ -29,12 +31,16 @@ public final class AxVanishPlugin extends AxPlugin {
 
     @Override
     public void enable() {
-        super.enable();
+        this.stateManager = new VanishStateManager(this);
     }
 
     @Override
     public void disable() {
         this.metrics.cancel();
+    }
+
+    public VanishStateManager stateManager() {
+        return this.stateManager;
     }
 
     public static AxVanishPlugin instance() {

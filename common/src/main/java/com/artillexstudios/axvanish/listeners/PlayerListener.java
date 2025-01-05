@@ -1,11 +1,10 @@
 package com.artillexstudios.axvanish.listeners;
 
-import com.artillexstudios.axapi.utils.MessageUtils;
 import com.artillexstudios.axapi.utils.StringUtils;
-import com.artillexstudios.axvanish.AxVanishPlugin;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.context.VanishContext;
 import com.artillexstudios.axvanish.api.context.source.ForceVanishSource;
+import com.artillexstudios.axvanish.api.context.source.JoinVanishSource;
 import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.config.Language;
 import com.artillexstudios.axvanish.exception.UserAlreadyLoadedException;
@@ -20,11 +19,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public final class PlayerListener implements Listener {
-    private final AxVanishPlugin plugin;
-
-    public PlayerListener(AxVanishPlugin plugin) {
-        this.plugin = plugin;
-    }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onAsyncPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event) {
@@ -42,6 +36,7 @@ public final class PlayerListener implements Listener {
         User user = AxVanishAPI.instance().userOrThrow(player);
         if (user.vanished() && !player.hasPermission("axvanish.vanish")) {
             user.update(false, new VanishContext.Builder()
+                    .withSource(JoinVanishSource.INSTANCE)
                     .withSource(ForceVanishSource.INSTANCE)
                     .build()
             );
@@ -52,23 +47,9 @@ public final class PlayerListener implements Listener {
             return;
         }
 
-        player.setVisibleByDefault(!user.vanished());
-
-        for (User onlineUser : AxVanishAPI.instance().online()) {
-            if (!onlineUser.canSee(user)) {
-                continue;
-            }
-
-            onlineUser.onlinePlayer().showPlayer(this.plugin, player);
-        }
-
-        for (User vanished : AxVanishAPI.instance().vanished()) {
-            if (!user.canSee(vanished)) {
-                continue;
-            }
-
-            player.showPlayer(this.plugin, vanished.onlinePlayer());
-        }
+        user.update(user.vanished(), new VanishContext.Builder()
+                .withSource(JoinVanishSource.INSTANCE)
+                .build());
 
         if (user.vanished()) {
             event.setJoinMessage(null);
