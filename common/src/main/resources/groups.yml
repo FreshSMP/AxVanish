@@ -16,9 +16,6 @@ groups:
           - "damage"
           - "interact"
           - "pickup"
-          - "push"
-          - "raid_trigger"
-          - "sculk_sensor"
           - "hunger"
           - "tab_complete"
       - type: action_bar

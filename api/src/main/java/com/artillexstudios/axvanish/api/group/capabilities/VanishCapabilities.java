@@ -17,6 +17,7 @@ public final class VanishCapabilities {
     public static final Class<ChatCapability> CHAT = register("chat", ChatCapability.class);
     public static final Class<InvincibleCapability> INVINCIBLE = register("invincible", InvincibleCapability.class);
     public static final Class<FlightCapability> FLIGHT = register("flight", FlightCapability.class);
+    public static final Class<PreventCapability> PREVENT = register("prevent", PreventCapability.class);
 
     public static <T extends VanishCapability> Class<T> register(String key, Class<T> capability) {
         capabilities.put(key, capability);
