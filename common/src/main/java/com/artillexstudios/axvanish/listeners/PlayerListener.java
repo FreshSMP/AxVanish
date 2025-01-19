@@ -4,6 +4,7 @@ import com.artillexstudios.axapi.utils.StringUtils;
 import com.artillexstudios.axvanish.AxVanishPlugin;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.context.VanishContext;
+import com.artillexstudios.axvanish.api.context.source.DisconnectVanishSource;
 import com.artillexstudios.axvanish.api.context.source.ForceVanishSource;
 import com.artillexstudios.axvanish.api.context.source.JoinVanishSource;
 import com.artillexstudios.axvanish.api.users.User;
@@ -63,6 +64,10 @@ public final class PlayerListener implements Listener {
         Player player = event.getPlayer();
         User user = AxVanishAPI.instance().userOrThrow(player);
 
+        user.update(user.vanished(), new VanishContext.Builder()
+                .withSource(DisconnectVanishSource.INSTANCE)
+                .build()
+        );
         if (user.vanished()) {
             player.removeMetadata("vanished", this.plugin);
             event.setQuitMessage(null);

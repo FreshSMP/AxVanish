@@ -12,12 +12,13 @@ import java.util.Map;
 public final class VanishCapabilities {
     private static final Map<String, Class<? extends VanishCapability>> capabilities = new HashMap<>();
     public static final Class<ActionBarCapability> ACTION_BAR = register("action_bar", ActionBarCapability.class);
-    public static final Class<PotionEffectsCapability> POTION_EFFECTS = register("potion_effects", PotionEffectsCapability.class);
-    public static final Class<SilentOpenCapability> SILENT_OPEN = register("silent_open", SilentOpenCapability.class);
     public static final Class<ChatCapability> CHAT = register("chat", ChatCapability.class);
-    public static final Class<InvincibleCapability> INVINCIBLE = register("invincible", InvincibleCapability.class);
     public static final Class<FlightCapability> FLIGHT = register("flight", FlightCapability.class);
+    public static final Class<InvincibleCapability> INVINCIBLE = register("invincible", InvincibleCapability.class);
+    public static final Class<MessageCapability> MESSAGE = register("message", MessageCapability.class);
+    public static final Class<PotionEffectsCapability> POTION_EFFECTS = register("potion_effects", PotionEffectsCapability.class);
     public static final Class<PreventCapability> PREVENT = register("prevent", PreventCapability.class);
+    public static final Class<SilentOpenCapability> SILENT_OPEN = register("silent_open", SilentOpenCapability.class);
 
     public static <T extends VanishCapability> Class<T> register(String key, Class<T> capability) {
         capabilities.put(key, capability);
