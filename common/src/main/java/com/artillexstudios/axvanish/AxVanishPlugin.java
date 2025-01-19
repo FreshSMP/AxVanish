@@ -4,6 +4,7 @@ import com.artillexstudios.axapi.AxPlugin;
 import com.artillexstudios.axapi.metrics.AxMetrics;
 import com.artillexstudios.axapi.utils.featureflags.FeatureFlags;
 import com.artillexstudios.axvanish.config.Config;
+import com.artillexstudios.axvanish.config.Groups;
 import com.artillexstudios.axvanish.config.Language;
 import com.artillexstudios.axvanish.utils.VanishStateManager;
 import dev.jorel.commandapi.CommandAPI;
@@ -30,6 +31,7 @@ public final class AxVanishPlugin extends AxPlugin {
 
         Config.reload();
         Language.reload();
+        Groups.reload();
 
         this.metrics = new AxMetrics(40);
         this.metrics.start();

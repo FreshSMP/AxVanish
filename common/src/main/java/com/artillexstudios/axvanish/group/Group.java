@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public final class Group implements com.artillexstudios.axvanish.api.group.Group {
+    private Group parent;
     private final String name;
     private final int priority;
     private final ClassToInstanceMap<VanishCapability> capabilities;
@@ -30,6 +31,10 @@ public final class Group implements com.artillexstudios.axvanish.api.group.Group
         this.capabilities = ImmutableClassToInstanceMap.copyOf(map);
     }
 
+    public void parent(Group group) {
+        this.parent = group;
+    }
+
     @Override
     public String name() {
         return this.name;
@@ -42,11 +47,13 @@ public final class Group implements com.artillexstudios.axvanish.api.group.Group
 
     @Override
     public boolean hasCapability(Class<? extends VanishCapability> capability) {
-        return this.capabilities.containsKey(capability);
+        boolean has = this.capabilities.containsKey(capability);
+        return has || this.parent != null && this.parent.hasCapability(capability);
     }
 
     @Override
     public <T extends VanishCapability> T capability(Class<T> capability) {
-        return capability.cast(this.capabilities.get(capability));
+        VanishCapability thisCapability = this.capabilities.get(capability);
+        return capability.cast(thisCapability == null ? this.parent.capability(capability) : thisCapability);
     }
 }

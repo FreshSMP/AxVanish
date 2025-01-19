@@ -30,3 +30,5 @@ groups:
       - type: potion
         effects:
           - "night_vision 10" # Potion type, amplifier
+
+config-version: 1

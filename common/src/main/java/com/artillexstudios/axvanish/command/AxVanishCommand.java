@@ -7,6 +7,7 @@ import com.artillexstudios.axvanish.api.context.VanishContext;
 import com.artillexstudios.axvanish.api.context.source.CommandVanishSource;
 import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.config.Config;
+import com.artillexstudios.axvanish.config.Groups;
 import com.artillexstudios.axvanish.config.Language;
 import dev.jorel.commandapi.CommandTree;
 import dev.jorel.commandapi.arguments.BooleanArgument;
@@ -100,6 +101,10 @@ public final class AxVanishCommand {
 
                                     if (!Language.reload()) {
                                         failed.add("language/" + Language.lastLanguage + ".yml");
+                                    }
+
+                                    if (!Groups.reload()) {
+                                        failed.add("groups.yml");
                                     }
 
                                     if (failed.isEmpty()) {
