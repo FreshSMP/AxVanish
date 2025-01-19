@@ -1,6 +1,7 @@
 package com.artillexstudios.axvanish.listeners;
 
 import com.artillexstudios.axapi.utils.StringUtils;
+import com.artillexstudios.axvanish.AxVanishPlugin;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.context.VanishContext;
 import com.artillexstudios.axvanish.api.context.source.ForceVanishSource;
@@ -9,7 +10,6 @@ import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.config.Language;
 import com.artillexstudios.axvanish.exception.UserAlreadyLoadedException;
 import com.artillexstudios.axvanish.users.Users;
-import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,6 +19,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public final class PlayerListener implements Listener {
+    private final AxVanishPlugin plugin;
+
+    public PlayerListener(AxVanishPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onAsyncPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event) {
@@ -40,20 +45,17 @@ public final class PlayerListener implements Listener {
                     .withSource(ForceVanishSource.INSTANCE)
                     .build()
             );
-            Component message = StringUtils.format(Language.prefix + Language.unVanish.hadNoVanishPermission);
-            for (User vanished : AxVanishAPI.instance().vanished()) {
-                vanished.message(message);
-            }
+
+            AxVanishAPI.instance().broadcast(user, Language.prefix + Language.unVanish.hadNoVanishPermission);
             return;
         }
 
         user.update(user.vanished(), new VanishContext.Builder()
                 .withSource(JoinVanishSource.INSTANCE)
-                .build());
+                .build()
+        );
 
-        if (user.vanished()) {
-            event.setJoinMessage(null);
-        }
+        event.setJoinMessage(null);
     }
 
     @EventHandler
@@ -62,6 +64,7 @@ public final class PlayerListener implements Listener {
         User user = AxVanishAPI.instance().userOrThrow(player);
 
         if (user.vanished()) {
+            player.removeMetadata("vanished", this.plugin);
             event.setQuitMessage(null);
         }
     }

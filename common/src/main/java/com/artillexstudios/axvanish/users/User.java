@@ -6,6 +6,7 @@ import com.artillexstudios.axvanish.api.context.VanishContext;
 import com.artillexstudios.axvanish.api.context.source.ForceVanishSource;
 import com.artillexstudios.axvanish.api.event.UserPreVanishStateChangeEvent;
 import com.artillexstudios.axvanish.api.event.UserVanishStateChangeEvent;
+import com.artillexstudios.axvanish.api.group.Group;
 import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -25,8 +26,8 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
     }
 
     @Override
-    public int priority() {
-        return 0;
+    public Group group() {
+        return null;
     }
 
     @Override
@@ -50,7 +51,11 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
 
     @Override
     public boolean canSee(com.artillexstudios.axvanish.api.users.User user) {
-        return this.priority() >= user.priority();
+        if (this.group() == null || user.group() == null) {
+            return false;
+        }
+
+        return this.group().priority() >= user.group().priority();
     }
 
     @Override

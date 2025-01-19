@@ -1,0 +1,32 @@
+groups:
+  default:
+    priority: 1 # Higher priorities can see lower priorities
+    capabilities:
+      - type: silent-open
+      - type: invincible
+      - type: flight
+      - type: chat
+        bypass-prefix: "!" # The bypass prefix
+      - type: prevent
+        actions:
+          - "block_break"
+          - "block_place"
+          - "block_change"
+          - "entity_target"
+          - "damage"
+          - "interact"
+          - "pickup"
+          - "push"
+          - "raid_trigger"
+          - "sculk_sensor"
+          - "hunger"
+          - "tab_complete"
+      - type: action_bar
+        message: "<white>You are currently vanished!"
+        refresh-interval: 20 # In ticks
+      - type: message
+        join: ""
+        leave: ""
+      - type: potion
+        effects:
+          - "night_vision 10" # Potion type, amplifier

@@ -6,6 +6,8 @@ import com.artillexstudios.axapi.utils.featureflags.FeatureFlags;
 import com.artillexstudios.axvanish.config.Config;
 import com.artillexstudios.axvanish.config.Language;
 import com.artillexstudios.axvanish.utils.VanishStateManager;
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.CommandAPIBukkitConfig;
 
 public final class AxVanishPlugin extends AxPlugin {
     private static AxVanishPlugin instance;
@@ -21,6 +23,10 @@ public final class AxVanishPlugin extends AxPlugin {
     @Override
     public void load() {
         instance = this;
+        CommandAPI.onLoad(new CommandAPIBukkitConfig(this)
+                .skipReloadDatapacks(true)
+                .setNamespace("axvanish")
+        );
 
         Config.reload();
         Language.reload();
@@ -32,11 +38,14 @@ public final class AxVanishPlugin extends AxPlugin {
     @Override
     public void enable() {
         this.stateManager = new VanishStateManager(this);
+        CommandAPI.onEnable();
     }
 
     @Override
     public void disable() {
         this.metrics.cancel();
+
+        CommandAPI.onDisable();
     }
 
     public VanishStateManager stateManager() {

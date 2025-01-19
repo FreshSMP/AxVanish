@@ -1,6 +1,10 @@
 package com.artillexstudios.axvanish.api;
 
+import com.artillexstudios.axapi.AxPlugin;
+import com.artillexstudios.axapi.utils.StringUtils;
 import com.artillexstudios.axvanish.api.users.User;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.util.Services;
 import org.bukkit.OfflinePlayer;
 
@@ -47,6 +51,25 @@ public interface AxVanishAPI {
      * @return A list of the vanished users. This is a copy of the list, modifying this does not change anything.
      */
     List<User> vanished();
+
+    AxPlugin plugin();
+
+    default void broadcast(User user, String message) {
+        this.broadcast(user, "", message);
+    }
+
+    default void broadcast(User user, String prefix, String message, TagResolver... resolvers) {
+        if (message.isBlank()) {
+            return;
+        }
+
+        Component formatted = StringUtils.format(prefix + message, resolvers);
+        for (User vanished : this.vanished()) {
+            if (vanished.canSee(user)) {
+                user.message(formatted);
+            }
+        }
+    }
 
     static AxVanishAPI instance() {
         return Holder.INSTANCE;

@@ -1,9 +1,12 @@
 package com.artillexstudios.axvanish.utils;
 
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axvanish.AxVanishPlugin;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.users.User;
+import com.artillexstudios.axvanish.config.Config;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.List;
 
@@ -15,12 +18,27 @@ public final class VanishStateManager {
     }
 
     public void updateViewers(User user, boolean current) {
+        ThreadUtils.ensureMain("updateViewers can only be called from the main thread!");
         Player player = user.onlinePlayer();
         if (player == null) {
             return;
         }
 
-        player.setVisibleByDefault(!current);
+        if (Config.debug) {
+            LogUtils.debug("Called updateViewers for user {}, current: {}", player.getName(), current);
+        }
+
+        if (current ^ !player.isVisibleByDefault()) {
+            if (Config.debug) {
+                LogUtils.debug("Vanish state changed!");
+            }
+            if (current) {
+                user.onlinePlayer().setMetadata("vanished", new FixedMetadataValue(this.plugin, true));
+            } else {
+                user.onlinePlayer().removeMetadata("vanished", this.plugin);
+            }
+            player.setVisibleByDefault(!current);
+        }
         List<User> onlineUsers = AxVanishAPI.instance().online();
         for (User online : onlineUsers) {
             Player onlinePlayer = online.onlinePlayer();

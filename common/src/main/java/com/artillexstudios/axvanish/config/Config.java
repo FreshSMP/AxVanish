@@ -3,7 +3,6 @@ package com.artillexstudios.axvanish.config;
 import com.artillexstudios.axapi.config.YamlConfiguration;
 import com.artillexstudios.axapi.config.annotation.Comment;
 import com.artillexstudios.axapi.config.annotation.ConfigurationPart;
-import com.artillexstudios.axapi.config.annotation.Serializable;
 import com.artillexstudios.axapi.utils.YamlUtils;
 import com.artillexstudios.axvanish.utils.FileUtils;
 
@@ -12,27 +11,6 @@ import java.nio.file.Path;
 
 public final class Config implements ConfigurationPart {
     private static final Config INSTANCE = new Config();
-    public static Priorities priorities = new Priorities();
-
-    @Serializable
-    public static class Priorities {
-        public boolean enabled = true;
-        @Comment("""
-                What should the mode be for priorities?
-                Modes: permission, manuel
-                
-                Permission: You give the user, or their group a permission, for example axvanish.priority.5
-                and they will inherit that permission
-                
-                Manual: You can manually assign a priority to a player using a command.
-                """)
-        public Mode mode = Mode.PERMISSION;
-
-        public enum Mode {
-            PERMISSION,
-            MANUAL;
-        }
-    }
 
     @Comment("""
             What language file should we load from the lang folder?
