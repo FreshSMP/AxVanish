@@ -5,6 +5,7 @@ import com.artillexstudios.axvanish.api.AxVanishAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,5 +29,13 @@ public final class VanishCapabilities {
 
     public static <T extends VanishCapability> Class<T> parse(String key) {
         return (Class<T>) capabilities.get(key);
+    }
+
+    public static <T extends VanishCapability> T create(String key, Map<String, Object> map) {
+        try {
+            return ((Class<T>) capabilities.get(key)).getDeclaredConstructor(Map.class).newInstance(map);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
