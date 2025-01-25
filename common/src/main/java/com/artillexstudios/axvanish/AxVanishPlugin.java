@@ -3,6 +3,7 @@ package com.artillexstudios.axvanish;
 import com.artillexstudios.axapi.AxPlugin;
 import com.artillexstudios.axapi.metrics.AxMetrics;
 import com.artillexstudios.axapi.utils.featureflags.FeatureFlags;
+import com.artillexstudios.axvanish.command.AxVanishCommand;
 import com.artillexstudios.axvanish.config.Config;
 import com.artillexstudios.axvanish.config.Groups;
 import com.artillexstudios.axvanish.config.Language;
@@ -49,6 +50,7 @@ public final class AxVanishPlugin extends AxPlugin {
     @Override
     public void enable() {
         this.stateManager = new VanishStateManager(this.plugin);
+        new AxVanishCommand(this).register();
         CommandAPI.onEnable();
 
         Bukkit.getPluginManager().registerEvents(new PlayerListener(this.plugin), this.plugin);
