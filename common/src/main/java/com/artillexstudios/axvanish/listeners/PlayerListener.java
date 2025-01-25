@@ -1,7 +1,6 @@
 package com.artillexstudios.axvanish.listeners;
 
 import com.artillexstudios.axapi.utils.StringUtils;
-import com.artillexstudios.axvanish.AxVanishPlugin;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.context.VanishContext;
 import com.artillexstudios.axvanish.api.context.source.DisconnectVanishSource;
@@ -18,11 +17,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public final class PlayerListener implements Listener {
-    private final AxVanishPlugin plugin;
+    private final JavaPlugin plugin;
 
-    public PlayerListener(AxVanishPlugin plugin) {
+    public PlayerListener(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 

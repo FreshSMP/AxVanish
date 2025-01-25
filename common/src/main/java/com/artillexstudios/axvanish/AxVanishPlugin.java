@@ -6,14 +6,23 @@ import com.artillexstudios.axapi.utils.featureflags.FeatureFlags;
 import com.artillexstudios.axvanish.config.Config;
 import com.artillexstudios.axvanish.config.Groups;
 import com.artillexstudios.axvanish.config.Language;
+import com.artillexstudios.axvanish.listeners.PlayerListener;
 import com.artillexstudios.axvanish.utils.VanishStateManager;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public final class AxVanishPlugin extends AxPlugin {
+    private final JavaPlugin plugin;
     private static AxVanishPlugin instance;
     private AxMetrics metrics;
     private VanishStateManager stateManager;
+
+    public AxVanishPlugin(JavaPlugin plugin) {
+        super(plugin);
+        this.plugin = plugin;
+    }
 
     @Override
     public void updateFlags(FeatureFlags flags) {
@@ -24,7 +33,7 @@ public final class AxVanishPlugin extends AxPlugin {
     @Override
     public void load() {
         instance = this;
-        CommandAPI.onLoad(new CommandAPIBukkitConfig(this)
+        CommandAPI.onLoad(new CommandAPIBukkitConfig(this.plugin)
                 .skipReloadDatapacks(true)
                 .setNamespace("axvanish")
         );
@@ -39,8 +48,10 @@ public final class AxVanishPlugin extends AxPlugin {
 
     @Override
     public void enable() {
-        this.stateManager = new VanishStateManager(this);
+        this.stateManager = new VanishStateManager(this.plugin);
         CommandAPI.onEnable();
+
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(this.plugin), this.plugin);
     }
 
     @Override

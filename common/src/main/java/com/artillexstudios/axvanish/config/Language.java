@@ -19,7 +19,7 @@ public final class Language implements ConfigurationPart {
     private static final Path LANGUAGE_DIRECTORY = FileUtils.PLUGIN_DIRECTORY.resolve("language");
     private static final Language INSTANCE = new Language();
     @Comment("The prefix we should use before messages sent by the plugin.")
-    public static String prefix = "<b><gradient:#CB2D3E:#EF473A>AxTeams</gradient></b> ";
+    public static String prefix = "<b><gradient:#CB2D3E:#EF473A>AxVanish</gradient></b> ";
     public static Reload reload = new Reload();
     public static Error error = new Error();
     public static Vanish vanish = new Vanish();

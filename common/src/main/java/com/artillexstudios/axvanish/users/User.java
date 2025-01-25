@@ -12,8 +12,16 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public final class User implements com.artillexstudios.axvanish.api.users.User {
+    private OfflinePlayer offlinePlayer;
+    private Group group;
     private Player onlinePlayer;
     private boolean vanished;
+
+    public User(OfflinePlayer player, Player onlinePlayer, Group group) {
+        this.onlinePlayer = onlinePlayer;
+        this.offlinePlayer = player;
+        this.group = group;
+    }
 
     @Override
     public Player onlinePlayer() {
@@ -22,12 +30,12 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
 
     @Override
     public OfflinePlayer player() {
-        return null;
+        return this.offlinePlayer;
     }
 
     @Override
     public Group group() {
-        return null;
+        return this.group;
     }
 
     @Override

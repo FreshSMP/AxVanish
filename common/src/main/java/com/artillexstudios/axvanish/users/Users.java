@@ -2,10 +2,12 @@ package com.artillexstudios.axvanish.users;
 
 import com.artillexstudios.axvanish.api.LoadContext;
 import com.artillexstudios.axvanish.api.users.User;
+import com.artillexstudios.axvanish.config.Groups;
 import com.artillexstudios.axvanish.exception.UserAlreadyLoadedException;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.bukkit.Bukkit;
 
 import java.util.List;
 import java.util.Optional;
@@ -71,8 +73,14 @@ public final class Users {
             return CompletableFuture.completedFuture(user);
         }
 
+        return CompletableFuture.completedFuture(new com.artillexstudios.axvanish.users.User(Bukkit.getOfflinePlayer(uuid), Bukkit.getPlayer(uuid), Groups.groups
+                .values()
+                .stream()
+                .findFirst()
+                .orElseThrow())
+        );
         // TODO: Fix
-        return null;/*DataHandler.loadUser(uuid, loadContext).toCompletableFuture();*/
+//        return null;/*DataHandler.loadUser(uuid, loadContext).toCompletableFuture();*/
     }
 
     public static List<User> online() {

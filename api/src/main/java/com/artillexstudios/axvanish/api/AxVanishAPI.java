@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.util.Services;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 import java.util.UUID;
@@ -52,7 +53,7 @@ public interface AxVanishAPI {
      */
     List<User> vanished();
 
-    AxPlugin plugin();
+    JavaPlugin plugin();
 
     default void broadcast(User user, String message) {
         this.broadcast(user, "", message);

@@ -1,19 +1,19 @@
 package com.artillexstudios.axvanish.utils;
 
 import com.artillexstudios.axapi.utils.LogUtils;
-import com.artillexstudios.axvanish.AxVanishPlugin;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.config.Config;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 
 public final class VanishStateManager {
-    private final AxVanishPlugin plugin;
+    private final JavaPlugin plugin;
 
-    public VanishStateManager(AxVanishPlugin plugin) {
+    public VanishStateManager(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 

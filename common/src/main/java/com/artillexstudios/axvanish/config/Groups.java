@@ -1,6 +1,9 @@
 package com.artillexstudios.axvanish.config;
 
+import com.artillexstudios.axapi.AxPlugin;
 import com.artillexstudios.axapi.config.YamlConfiguration;
+import com.artillexstudios.axapi.config.annotation.Ignored;
+import com.artillexstudios.axapi.libs.snakeyaml.DumperOptions;
 import com.artillexstudios.axapi.utils.YamlUtils;
 import com.artillexstudios.axvanish.group.Group;
 import com.artillexstudios.axvanish.utils.FileUtils;
@@ -14,6 +17,8 @@ import java.util.Map;
 public final class Groups {
     private static final Groups INSTANCE = new Groups();
     private YamlConfiguration config = null;
+    @Ignored
+    public static Map<String, Group> groups = new HashMap<>();
 
     public static boolean reload() {
         return INSTANCE.refreshConfig();
@@ -29,16 +34,21 @@ public final class Groups {
 
         if (this.config == null) {
             this.config = YamlConfiguration.of(path)
+                    .withDefaults(AxPlugin.getPlugin().getResource("groups.yml"))
                     .configVersion(1, "config-version")
                     .withDumperOptions(options -> {
-//                        options.setPrettyFlow(true);
-//                        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+                        options.setPrettyFlow(true);
+                        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
                     }).build();
         }
 
         this.config.load();
         Map<String, Group> groups = new HashMap<>();
         Map<String, Map<String, Object>> section = (Map<String, Map<String, Object>>) this.config.getMap("groups");
+        if (section == null) {
+            return false;
+        }
+
         for (Map.Entry<String, Map<String, Object>> entry : section.entrySet()) {
             groups.put(entry.getKey(), new Group(entry.getKey(), (Integer) entry.getValue().getOrDefault("priority", 1), (List<Map<String, Object>>) entry.getValue().getOrDefault("capabilities", List.of())));
         }
@@ -56,6 +66,7 @@ public final class Groups {
 
             groups.get(entry.getKey()).parent(parentGroup);
         }
+        Groups.groups = groups;
         return true;
     }
 }
