@@ -2,7 +2,7 @@ groups:
   default:
     priority: 1 # Higher priorities can see lower priorities
     capabilities:
-      - type: silent-open
+      - type: silent_open
       - type: invincible
       - type: flight
       - type: chat
@@ -24,7 +24,7 @@ groups:
       - type: message
         join: ""
         leave: ""
-      - type: potion
+      - type: potion_effects
         effects:
           - "night_vision 10" # Potion type, amplifier
 

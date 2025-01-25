@@ -1,7 +1,6 @@
 package com.artillexstudios.axvanish.api;
 
 import com.artillexstudios.axapi.AxPlugin;
-import com.artillexstudios.axvanish.AxVanishPlugin;
 import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.users.Users;
 import org.bukkit.plugin.java.JavaPlugin;

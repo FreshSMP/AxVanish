@@ -32,6 +32,10 @@ public final class MessageCapability extends VanishCapability implements Listene
     @EventHandler
     public void onUserVanishStateChangeEvent(UserVanishStateChangeEvent event) {
         MessageCapability capability = event.user().capability(VanishCapabilities.MESSAGE);
+        if (capability == null) {
+            return;
+        }
+
         if (event.context() == null) {
             return;
         }

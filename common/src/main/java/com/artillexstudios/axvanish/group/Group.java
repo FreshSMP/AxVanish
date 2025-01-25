@@ -26,6 +26,10 @@ public final class Group implements com.artillexstudios.axvanish.api.group.Group
             }
 
             VanishCapability vanishCapability = VanishCapabilities.create(type, capability);
+            if (vanishCapability == null) {
+                continue;
+            }
+
             map.put(vanishCapability.getClass(), vanishCapability);
         }
         this.capabilities = ImmutableClassToInstanceMap.copyOf(map);
@@ -54,6 +58,6 @@ public final class Group implements com.artillexstudios.axvanish.api.group.Group
     @Override
     public <T extends VanishCapability> T capability(Class<T> capability) {
         VanishCapability thisCapability = this.capabilities.get(capability);
-        return capability.cast(thisCapability == null ? this.parent.capability(capability) : thisCapability);
+        return capability.cast(thisCapability == null && this.parent != null ? this.parent.capability(capability) : thisCapability);
     }
 }

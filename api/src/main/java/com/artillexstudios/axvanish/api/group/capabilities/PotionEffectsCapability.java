@@ -35,6 +35,10 @@ public final class PotionEffectsCapability extends VanishCapability implements L
     @EventHandler
     public void onUserVanishStateChangeEvent(UserVanishStateChangeEvent event) {
         PotionEffectsCapability capability = event.user().capability(VanishCapabilities.POTION_EFFECTS);
+        if (capability == null) {
+            return;
+        }
+
         for (PotionEffect effect : capability.effects()) {
             if (event.newState()) {
                 event.user().onlinePlayer().addPotionEffect(effect);

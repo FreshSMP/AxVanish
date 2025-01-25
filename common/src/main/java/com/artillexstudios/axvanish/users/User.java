@@ -23,6 +23,10 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
         this.group = group;
     }
 
+    public void onlinePlayer(Player onlinePlayer) {
+        this.onlinePlayer = onlinePlayer;
+    }
+
     @Override
     public Player onlinePlayer() {
         return this.onlinePlayer;

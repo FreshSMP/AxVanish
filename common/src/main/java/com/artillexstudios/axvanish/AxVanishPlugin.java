@@ -41,7 +41,6 @@ public final class AxVanishPlugin extends AxPlugin {
 
         Config.reload();
         Language.reload();
-        Groups.reload();
 
         this.metrics = new AxMetrics(40);
         this.metrics.start();
@@ -51,6 +50,7 @@ public final class AxVanishPlugin extends AxPlugin {
     public void enable() {
         this.stateManager = new VanishStateManager(this.plugin);
         new AxVanishCommand(this).register();
+        Groups.reload();
         CommandAPI.onEnable();
 
         Bukkit.getPluginManager().registerEvents(new PlayerListener(this.plugin), this.plugin);

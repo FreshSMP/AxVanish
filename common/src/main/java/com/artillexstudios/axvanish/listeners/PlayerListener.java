@@ -40,6 +40,7 @@ public final class PlayerListener implements Listener {
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         User user = AxVanishAPI.instance().userOrThrow(player);
+        ((com.artillexstudios.axvanish.users.User) user).onlinePlayer(player);
         if (user.vanished() && !player.hasPermission("axvanish.vanish")) {
             user.update(false, new VanishContext.Builder()
                     .withSource(JoinVanishSource.INSTANCE)
@@ -62,15 +63,18 @@ public final class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        User user = AxVanishAPI.instance().userOrThrow(player);
+        User user = Users.disconnect(player.getUniqueId());
 
         user.update(user.vanished(), new VanishContext.Builder()
                 .withSource(DisconnectVanishSource.INSTANCE)
                 .build()
         );
+
         if (user.vanished()) {
             player.removeMetadata("vanished", this.plugin);
             event.setQuitMessage(null);
         }
+
+        ((com.artillexstudios.axvanish.users.User) user).onlinePlayer(null);
     }
 }

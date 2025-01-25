@@ -31,7 +31,6 @@ subprojects {
 
     dependencies {
         implementation("com.artillexstudios.axapibootstrapper:axapi-bootstrapper:1.0.21:all")
-        compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
         compileOnly("com.artillexstudios.axapi:axapi:1.4.531:all")
         compileOnly("org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT")
         compileOnly("dev.jorel:commandapi-bukkit-shade:9.7.0")

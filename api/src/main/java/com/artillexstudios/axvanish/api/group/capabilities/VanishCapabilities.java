@@ -1,6 +1,7 @@
 package com.artillexstudios.axvanish.api.group.capabilities;
 
 import com.artillexstudios.axapi.reflection.ClassUtils;
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -34,8 +35,14 @@ public final class VanishCapabilities {
     }
 
     public static <T extends VanishCapability> T create(String key, Map<String, Object> map) {
+        Class<T> capability = (Class<T>) capabilities.get(key);
+        if (capability == null) {
+            LogUtils.warn("Failed to find capability with key {}! Loaded capabilities: {}", key, capabilities.keySet());
+            return null;
+        }
+
         try {
-            return ((Class<T>) capabilities.get(key)).getDeclaredConstructor(Map.class).newInstance(map);
+            return capability.getDeclaredConstructor(Map.class).newInstance(map);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }

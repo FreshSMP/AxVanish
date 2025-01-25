@@ -18,11 +18,11 @@ public interface User extends VanishSource {
     Group group();
 
     default <T extends VanishCapability> T capability(Class<T> capability) {
-        return this.group().capability(capability);
+        return this.vanished() ? this.group().capability(capability) : null;
     }
 
     default <T extends VanishCapability> T capability(String capability) {
-        return this.group().capability(VanishCapabilities.parse(capability));
+        return this.vanished() ? this.group().capability(VanishCapabilities.parse(capability)) : null;
     }
 
     default boolean hasCapability(String capability) {

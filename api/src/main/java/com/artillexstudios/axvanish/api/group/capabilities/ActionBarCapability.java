@@ -1,15 +1,10 @@
 package com.artillexstudios.axvanish.api.group.capabilities;
 
 import com.artillexstudios.axapi.AxPlugin;
-import com.artillexstudios.axapi.hologram.HologramPage;
-import com.artillexstudios.axapi.hologram.Holograms;
-import com.artillexstudios.axapi.nms.v1_20_R2.entity.PacketEntity;
-import com.artillexstudios.axapi.placeholders.Placeholders;
 import com.artillexstudios.axapi.reflection.ClassUtils;
 import com.artillexstudios.axapi.scheduler.Scheduler;
 import com.artillexstudios.axapi.utils.ActionBar;
 import com.artillexstudios.axapi.utils.StringUtils;
-import com.artillexstudios.axapi.utils.placeholder.Placeholder;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.users.User;
 import me.clip.placeholderapi.PlaceholderAPI;
