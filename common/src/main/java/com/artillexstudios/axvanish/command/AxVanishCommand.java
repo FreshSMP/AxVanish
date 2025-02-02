@@ -1,5 +1,6 @@
 package com.artillexstudios.axvanish.command;
 
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axapi.utils.MessageUtils;
 import com.artillexstudios.axvanish.AxVanishPlugin;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
@@ -36,6 +37,9 @@ public final class AxVanishCommand {
                         MessageUtils.sendMessage(sender, Language.prefix, Language.error.userNotLoaded);
                         return;
                     }
+                    if (Config.debug) {
+                        LogUtils.debug("Debug is working!");
+                    }
 
                     VanishContext context = new VanishContext.Builder()
                             .withSource(user)
@@ -43,6 +47,7 @@ public final class AxVanishCommand {
                             .build();
                     boolean previous = user.vanished();
                     if (!user.update(!user.vanished(), context)) {
+                        LogUtils.info("Failed to change state!");
                         // The user's visibility was not changed because an event was cancelled
                         return;
                     }

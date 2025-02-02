@@ -48,12 +48,18 @@ public final class VanishStateManager {
 
             // We want to be sure that only people who can see the player
             // can see the player. This is not a mistake
+            if (Config.debug) {
+                LogUtils.debug("Can {} see {}: {}", onlinePlayer.getName(), player.getName(), online.canSee(user));
+            }
             if (online.canSee(user)) {
                 onlinePlayer.showPlayer(this.plugin, player);
             } else {
                 onlinePlayer.hidePlayer(this.plugin, player);
             }
 
+            if (Config.debug) {
+                LogUtils.debug("Can {} see {}: {}", player.getName(), onlinePlayer.getName(), user.canSee(online));
+            }
             if (user.canSee(online)) {
                 player.showPlayer(this.plugin, onlinePlayer);
             } else {

@@ -1,12 +1,14 @@
 package com.artillexstudios.axvanish.users;
 
 import com.artillexstudios.axapi.nms.NMSHandlers;
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axvanish.AxVanishPlugin;
 import com.artillexstudios.axvanish.api.context.VanishContext;
 import com.artillexstudios.axvanish.api.context.source.ForceVanishSource;
 import com.artillexstudios.axvanish.api.event.UserPreVanishStateChangeEvent;
 import com.artillexstudios.axvanish.api.event.UserVanishStateChangeEvent;
 import com.artillexstudios.axvanish.api.group.Group;
+import com.artillexstudios.axvanish.config.Config;
 import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -53,6 +55,7 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
             return true;
         }
 
+        AxVanishPlugin.instance().stateManager().updateViewers(this, this.vanished);
         return false;
     }
 
@@ -63,11 +66,21 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
 
     @Override
     public boolean canSee(com.artillexstudios.axvanish.api.users.User user) {
-        if (this.group() == null || user.group() == null) {
-            return false;
+        if (this.group() == null) {
+            if (Config.debug) {
+                LogUtils.debug("Can see, because the group is null and vanished: {}", user.vanished());
+            }
+            return !user.vanished();
         }
 
-        return this.group().priority() >= user.group().priority();
+        if (Config.debug) {
+            LogUtils.debug("Priority: this {} ; user", this.group().priority(), user.group().priority());
+        }
+        if (this.group().priority() >= user.group().priority()) {
+            return true;
+        }
+
+        return !this.vanished;
     }
 
     @Override
