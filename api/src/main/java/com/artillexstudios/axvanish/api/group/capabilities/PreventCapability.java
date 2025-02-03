@@ -13,7 +13,6 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.server.TabCompleteEvent;
 
 import java.util.ArrayList;
@@ -120,20 +119,6 @@ public final class PreventCapability extends VanishCapability implements Listene
         }
 
         if (capability.prevents("damage")) {
-            event.setCancelled(true);
-            user.cancelMessage();
-        }
-    }
-
-    @EventHandler
-    public void onPlayerInteractEvent(PlayerInteractEvent event) {
-        User user = AxVanishAPI.instance().userOrThrow(event.getPlayer());
-        PreventCapability capability = user.capability(VanishCapabilities.PREVENT);
-        if (capability == null) {
-            return;
-        }
-
-        if (capability.prevents("interact")) {
             event.setCancelled(true);
             user.cancelMessage();
         }
