@@ -12,6 +12,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.server.TabCompleteEvent;
 
@@ -54,6 +55,7 @@ public final class PreventCapability extends VanishCapability implements Listene
 
         if (capability.prevents("block_break")) {
             event.setCancelled(true);
+            user.cancelMessage();
         }
     }
 
@@ -67,6 +69,7 @@ public final class PreventCapability extends VanishCapability implements Listene
 
         if (capability.prevents("block_place")) {
             event.setCancelled(true);
+            user.cancelMessage();
         }
     }
 
@@ -84,6 +87,7 @@ public final class PreventCapability extends VanishCapability implements Listene
 
         if (capability.prevents("block_change")) {
             event.setCancelled(true);
+            user.cancelMessage();
         }
     }
 
@@ -117,6 +121,7 @@ public final class PreventCapability extends VanishCapability implements Listene
 
         if (capability.prevents("damage")) {
             event.setCancelled(true);
+            user.cancelMessage();
         }
     }
 
@@ -130,6 +135,7 @@ public final class PreventCapability extends VanishCapability implements Listene
 
         if (capability.prevents("interact")) {
             event.setCancelled(true);
+            user.cancelMessage();
         }
     }
 
@@ -147,6 +153,7 @@ public final class PreventCapability extends VanishCapability implements Listene
 
         if (capability.prevents("pickup")) {
             event.setCancelled(true);
+            user.cancelMessage();
         }
     }
 
@@ -164,6 +171,20 @@ public final class PreventCapability extends VanishCapability implements Listene
 
         if (capability.prevents("hunger")) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDropItemEvent(PlayerDropItemEvent event) {
+        User user = AxVanishAPI.instance().userOrThrow(event.getPlayer());
+        PreventCapability capability = user.capability(VanishCapabilities.PREVENT);
+        if (capability == null) {
+            return;
+        }
+
+        if (capability.prevents("item-drop")) {
+            event.setCancelled(true);
+            user.cancelMessage();
         }
     }
 

@@ -49,6 +49,10 @@ public final class MessageCapability extends VanishCapability implements Listene
         }
 
         String message = event.newState() ? capability.joinMessage : capability.leaveMessage;
+        if (message == null || message.isBlank()) {
+            return;
+        }
+
         if (ClassUtils.INSTANCE.classExists("me.clip.placeholderapi.PlaceholderAPI")) {
             message = PlaceholderAPI.setPlaceholders(event.user().onlinePlayer(), message);
         }

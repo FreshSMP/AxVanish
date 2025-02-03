@@ -2,6 +2,7 @@ package com.artillexstudios.axvanish.users;
 
 import com.artillexstudios.axapi.nms.NMSHandlers;
 import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.MessageUtils;
 import com.artillexstudios.axvanish.AxVanishPlugin;
 import com.artillexstudios.axvanish.api.context.VanishContext;
 import com.artillexstudios.axvanish.api.context.source.ForceVanishSource;
@@ -9,6 +10,8 @@ import com.artillexstudios.axvanish.api.event.UserPreVanishStateChangeEvent;
 import com.artillexstudios.axvanish.api.event.UserVanishStateChangeEvent;
 import com.artillexstudios.axvanish.api.group.Group;
 import com.artillexstudios.axvanish.config.Config;
+import com.artillexstudios.axvanish.config.Language;
+import com.artillexstudios.axvanish.database.DataHandler;
 import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -19,9 +22,14 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
     private Player onlinePlayer;
     private boolean vanished;
 
-    public User(OfflinePlayer player, Player onlinePlayer, Group group) {
+    public User(OfflinePlayer player, Player onlinePlayer, Group group, boolean vanished) {
         this.onlinePlayer = onlinePlayer;
         this.offlinePlayer = player;
+        this.group = group;
+        this.vanished = vanished;
+    }
+
+    public void group(Group group) {
         this.group = group;
     }
 
@@ -52,6 +60,7 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
             this.vanished = vanished;
             new UserVanishStateChangeEvent(this, prev, vanished, context).call();
             AxVanishPlugin.instance().stateManager().updateViewers(this, this.vanished);
+            DataHandler.save(this);
             return true;
         }
 
@@ -73,9 +82,6 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
             return !user.vanished();
         }
 
-        if (Config.debug) {
-            LogUtils.debug("Priority: this {} ; user", this.group().priority(), user.group().priority());
-        }
         if (this.group().priority() >= user.group().priority()) {
             return true;
         }
@@ -91,5 +97,15 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
         }
 
         NMSHandlers.getNmsHandler().sendMessage(player, message);
+    }
+
+    @Override
+    public void cancelMessage() {
+        Player player = this.onlinePlayer();
+        if (player == null) {
+            return;
+        }
+
+        MessageUtils.sendMessage(player, Language.prefix, Language.error.vanished);
     }
 }

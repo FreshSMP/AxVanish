@@ -44,4 +44,6 @@ public interface User extends VanishSource {
     boolean canSee(User user);
 
     void message(Component message);
+
+    void cancelMessage();
 }

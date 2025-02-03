@@ -7,6 +7,7 @@ import com.artillexstudios.axvanish.command.AxVanishCommand;
 import com.artillexstudios.axvanish.config.Config;
 import com.artillexstudios.axvanish.config.Groups;
 import com.artillexstudios.axvanish.config.Language;
+import com.artillexstudios.axvanish.database.DataHandler;
 import com.artillexstudios.axvanish.listeners.PlayerListener;
 import com.artillexstudios.axvanish.utils.VanishStateManager;
 import dev.jorel.commandapi.CommandAPI;
@@ -41,6 +42,7 @@ public final class AxVanishPlugin extends AxPlugin {
 
         Config.reload();
         Language.reload();
+        DataHandler.setup();
 
         this.metrics = new AxMetrics(40);
         this.metrics.start();

@@ -10,6 +10,7 @@ import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.config.Language;
 import com.artillexstudios.axvanish.exception.UserAlreadyLoadedException;
 import com.artillexstudios.axvanish.users.Users;
+import com.artillexstudios.axvanish.utils.PermissionUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -41,6 +42,7 @@ public final class PlayerListener implements Listener {
         Player player = event.getPlayer();
         User user = AxVanishAPI.instance().userOrThrow(player);
         ((com.artillexstudios.axvanish.users.User) user).onlinePlayer(player);
+        ((com.artillexstudios.axvanish.users.User) user).group(PermissionUtils.INSTANCE.group(player));
         if (user.vanished() && !player.hasPermission("axvanish.vanish")) {
             user.update(false, new VanishContext.Builder()
                     .withSource(JoinVanishSource.INSTANCE)

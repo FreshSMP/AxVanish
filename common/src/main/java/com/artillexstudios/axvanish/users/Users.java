@@ -5,6 +5,7 @@ import com.artillexstudios.axapi.libs.caffeine.caffeine.cache.Caffeine;
 import com.artillexstudios.axvanish.api.LoadContext;
 import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.config.Groups;
+import com.artillexstudios.axvanish.database.DataHandler;
 import com.artillexstudios.axvanish.exception.UserAlreadyLoadedException;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.bukkit.Bukkit;
@@ -73,15 +74,7 @@ public final class Users {
             return CompletableFuture.completedFuture(user);
         }
 
-        user = new com.artillexstudios.axvanish.users.User(Bukkit.getOfflinePlayer(uuid), Bukkit.getPlayer(uuid), Groups.groups
-                .values()
-                .stream()
-                .findFirst()
-                .orElseThrow());
-        loadWithContext(user, loadContext);
-        return CompletableFuture.completedFuture(user);
-        // TODO: Fix
-//        return null;/*DataHandler.loadUser(uuid, loadContext).toCompletableFuture();*/
+        return DataHandler.loadUser(uuid, loadContext);
     }
 
     public static List<User> online() {

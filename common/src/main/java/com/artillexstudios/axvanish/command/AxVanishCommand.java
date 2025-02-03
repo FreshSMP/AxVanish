@@ -5,17 +5,20 @@ import com.artillexstudios.axapi.utils.MessageUtils;
 import com.artillexstudios.axvanish.AxVanishPlugin;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.context.VanishContext;
+import com.artillexstudios.axvanish.api.context.VanishSource;
 import com.artillexstudios.axvanish.api.context.source.CommandVanishSource;
+import com.artillexstudios.axvanish.api.context.source.ConsoleVanishSource;
 import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.config.Config;
 import com.artillexstudios.axvanish.config.Groups;
 import com.artillexstudios.axvanish.config.Language;
 import dev.jorel.commandapi.CommandTree;
-import dev.jorel.commandapi.arguments.BooleanArgument;
 import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,30 +57,71 @@ public final class AxVanishCommand {
 
                     if (previous) {
                         MessageUtils.sendMessage(sender, Language.prefix, Language.unVanish.unVanish);
+                        AxVanishAPI.instance().online()
+                                .stream()
+                                .filter(other -> other.canSee(user) && other != user)
+                                .forEach(other -> {
+                                    MessageUtils.sendMessage(other.onlinePlayer(), Language.prefix, Language.unVanish.broadcast);
+                                });
                     } else {
                         MessageUtils.sendMessage(sender, Language.prefix, Language.vanish.vanish);
+                        AxVanishAPI.instance().online()
+                                .stream()
+                                .filter(other -> other.canSee(user) && other != user)
+                                .forEach(other -> {
+                                    MessageUtils.sendMessage(other.onlinePlayer(), Language.prefix, Language.vanish.broadcast);
+                                });
                     }
                 })
                 .then(new LiteralArgument("toggle")
                         .withPermission("axvanish.command.toggle.other")
                         .then(new OfflinePlayerArgument("player")
                                 .withPermission("axvanish.command.toggle.other")
-
-                        )
-                )
-                .then(new LiteralArgument("set")
-                        .withPermission("axvanish.command.set")
-                        .then(new OfflinePlayerArgument("player")
-                                .withPermission("axvanish.command.set.other")
-                                .then(new BooleanArgument("enabled")
-                                        .executes((sender, args) -> {
-
-                                        })
-                                )
-                        )
-                        .then(new BooleanArgument("enabled")
                                 .executes((sender, args) -> {
+                                    OfflinePlayer offlinePlayer = args.getByClass("player", OfflinePlayer.class);
+                                    if (offlinePlayer == null) {
+                                        return;
+                                    }
 
+                                    VanishSource source = sender instanceof Player player ? AxVanishAPI.instance().getUserIfLoadedImmediately(player) : ConsoleVanishSource.INSTANCE;
+                                    AxVanishAPI.instance().user(offlinePlayer.getUniqueId()).thenAccept(user -> {
+                                        if (source instanceof User senderUser) {
+                                            if (senderUser.group() != null && user.group() != null && senderUser.group().priority() <= user.group().priority()) {
+                                                MessageUtils.sendMessage(sender, Language.prefix, Language.error.notHighEnoughGroup);
+                                                return;
+                                            }
+                                        }
+
+                                        VanishContext context = new VanishContext.Builder()
+                                                .withSource(source)
+                                                .withSource(CommandVanishSource.INSTANCE)
+                                                .build();
+
+                                        boolean previous = user.vanished();
+                                        if (!user.update(!user.vanished(), context)) {
+                                            LogUtils.info("Failed to change state!");
+                                            // The user's visibility was not changed because an event was cancelled
+                                            return;
+                                        }
+
+                                        if (previous) {
+                                            MessageUtils.sendMessage(sender, Language.prefix, Language.unVanish.unVanish);
+                                            AxVanishAPI.instance().online()
+                                                    .stream()
+                                                    .filter(other -> other.canSee(user) && other != user)
+                                                    .forEach(other -> {
+                                                        MessageUtils.sendMessage(other.onlinePlayer(), Language.prefix, Language.unVanish.broadcast);
+                                                    });
+                                        } else {
+                                            MessageUtils.sendMessage(sender, Language.prefix, Language.vanish.vanish);
+                                            AxVanishAPI.instance().online()
+                                                    .stream()
+                                                    .filter(other -> other.canSee(user) && other != user)
+                                                    .forEach(other -> {
+                                                        MessageUtils.sendMessage(other.onlinePlayer(), Language.prefix, Language.vanish.broadcast);
+                                                    });
+                                        }
+                                    });
                                 })
                         )
                 )

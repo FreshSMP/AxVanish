@@ -1,29 +1,45 @@
 package com.artillexstudios.axvanish.database;
 
 import com.artillexstudios.axapi.utils.AsyncUtils;
+import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axvanish.api.LoadContext;
 import com.artillexstudios.axvanish.config.Config;
+import com.artillexstudios.axvanish.users.User;
+import com.artillexstudios.axvanish.users.Users;
+import org.bukkit.Bukkit;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.Result;
+import org.jooq.Table;
+import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 public final class DataHandler {
+    private static final Table<Record> users = DSL.table("axvanish_users");
+    private static final Field<Integer> id = DSL.field("id", int.class);
+    private static final Field<UUID> uuid = DSL.field("uuid", UUID.class);
+    private static final Field<Boolean> vanished = DSL.field("vanished", boolean.class);
 
     public static CompletionStage<Void> setup() {
         ArrayList<CompletableFuture<Integer>> futures = new ArrayList<>();
 
-//        CompletionStage<Integer> teams = DatabaseConnector.getInstance().context().createTableIfNotExists(TEAMS)
-//                .column(ID, SQLDataType.INTEGER.identity(true))
-//                .column(TEAM_NAME, SQLDataType.VARCHAR)
-//                .column(TEAM_LEADER, SQLDataType.INTEGER)
-//                .primaryKey(ID)
-//                .executeAsync(AsyncUtils.executor())
-//                .exceptionallyAsync(throwable -> {
-//                    LogUtils.error("An unexpected error occurred while running teams table creation query!", throwable);
-//                    return 0;
-//                });
-//
-//        futures.add(teams.toCompletableFuture());
+        CompletionStage<Integer> teams = DatabaseConnector.getInstance().context().createTableIfNotExists(users)
+                .column(id, SQLDataType.INTEGER.identity(true))
+                .column(uuid, SQLDataType.UUID)
+                .column(vanished, SQLDataType.BOOLEAN)
+                .primaryKey(id)
+                .executeAsync()
+                .exceptionallyAsync(throwable -> {
+                    LogUtils.error("An unexpected error occurred while running users table creation query!", throwable);
+                    return 0;
+                });
+
+        futures.add(teams.toCompletableFuture());
 
 
         if (Config.database.type == DatabaseType.SQLITE) {
@@ -39,5 +55,44 @@ public final class DataHandler {
         }
 
         return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+    }
+
+    public static CompletableFuture<com.artillexstudios.axvanish.api.users.User> loadUser(UUID uuid, LoadContext context) {
+        return CompletableFuture.supplyAsync(() -> {
+            Result<Record> select = DatabaseConnector.getInstance().context()
+                    .select()
+                    .from(users)
+                    .where(DataHandler.uuid.eq(uuid))
+                    .limit(1)
+                    .fetch();
+
+            if (!select.isEmpty()) {
+                Record record = select.get(0);
+                boolean vanished = record.get(DataHandler.vanished);
+                User user = new User(Bukkit.getOfflinePlayer(uuid), null, null, vanished);
+                Users.loadWithContext(user, context);
+                return user;
+            }
+
+            DatabaseConnector.getInstance().context()
+                    .insertInto(users)
+                    .set(DataHandler.uuid, uuid)
+                    .set(DataHandler.vanished, false)
+                    .execute();
+
+            User user = new User(Bukkit.getOfflinePlayer(uuid), null, null, false);
+            Users.loadWithContext(user, context);
+            return user;
+        });
+    }
+
+    public static void save(User user) {
+        CompletableFuture.runAsync(() -> {
+            DatabaseConnector.getInstance().context()
+                    .update(users)
+                    .set(DataHandler.vanished, user.vanished())
+                    .where(DataHandler.uuid.eq(user.player().getUniqueId()))
+                    .execute();
+        });
     }
 }

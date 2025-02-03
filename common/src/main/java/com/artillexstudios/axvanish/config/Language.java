@@ -36,6 +36,8 @@ public final class Language implements ConfigurationPart {
     public static class Error {
         public String userNotLoaded = "<#FF0000>Your userdata has not loaded yet! Please try again in a moment!";
         public String failedToLoadUserData = "<#FF0000>Failed to load your userdata";
+        public String vanished = "<#FF0000>You can't do that while vanished!";
+        public String notHighEnoughGroup = "<#FF0000>Your group's priority isn't high enough to change that user's vanish state-";
     }
 
     @Serializable

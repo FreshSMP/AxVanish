@@ -65,7 +65,7 @@ public interface AxVanishAPI {
         }
 
         Component formatted = StringUtils.format(prefix + message, resolvers);
-        for (User vanished : this.vanished()) {
+        for (User vanished : this.online()) {
             if (vanished.canSee(user)) {
                 user.message(formatted);
             }

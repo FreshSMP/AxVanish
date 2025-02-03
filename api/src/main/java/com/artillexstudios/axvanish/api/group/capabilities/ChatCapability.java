@@ -42,6 +42,7 @@ public final class ChatCapability extends VanishCapability implements Listener {
             event.setMessage(event.getMessage().substring(bypassPrefix.length()));
         } else {
             event.setCancelled(true);
+            user.cancelMessage();
         }
     }
 }
