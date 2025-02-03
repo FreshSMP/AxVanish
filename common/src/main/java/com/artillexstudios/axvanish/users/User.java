@@ -82,6 +82,10 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
             return !user.vanished();
         }
 
+        if (user.group() == null) {
+            return !user.vanished();
+        }
+
         if (this.group().priority() >= user.group().priority()) {
             return true;
         }
