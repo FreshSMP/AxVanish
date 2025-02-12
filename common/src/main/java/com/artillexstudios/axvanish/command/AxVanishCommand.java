@@ -61,7 +61,7 @@ public final class AxVanishCommand {
                                 .stream()
                                 .filter(other -> other.canSee(user) && other != user)
                                 .forEach(other -> {
-                                    MessageUtils.sendMessage(other.onlinePlayer(), Language.prefix, Language.unVanish.broadcast);
+                                    MessageUtils.sendMessage(other.onlinePlayer(), Language.prefix, Language.unVanish.broadcast, Placeholder.unparsed("player", sender.getName()));
                                 });
                     } else {
                         MessageUtils.sendMessage(sender, Language.prefix, Language.vanish.vanish);
@@ -69,7 +69,7 @@ public final class AxVanishCommand {
                                 .stream()
                                 .filter(other -> other.canSee(user) && other != user)
                                 .forEach(other -> {
-                                    MessageUtils.sendMessage(other.onlinePlayer(), Language.prefix, Language.vanish.broadcast);
+                                    MessageUtils.sendMessage(other.onlinePlayer(), Language.prefix, Language.vanish.broadcast, Placeholder.unparsed("player", sender.getName()));
                                 });
                     }
                 })
@@ -110,7 +110,7 @@ public final class AxVanishCommand {
                                                     .stream()
                                                     .filter(other -> other.canSee(user) && other != user)
                                                     .forEach(other -> {
-                                                        MessageUtils.sendMessage(other.onlinePlayer(), Language.prefix, Language.unVanish.broadcast);
+                                                        MessageUtils.sendMessage(other.onlinePlayer(), Language.prefix, Language.unVanish.broadcast, Placeholder.unparsed("player", user.player().getName()));
                                                     });
                                         } else {
                                             MessageUtils.sendMessage(sender, Language.prefix, Language.vanish.vanish);
@@ -118,7 +118,7 @@ public final class AxVanishCommand {
                                                     .stream()
                                                     .filter(other -> other.canSee(user) && other != user)
                                                     .forEach(other -> {
-                                                        MessageUtils.sendMessage(other.onlinePlayer(), Language.prefix, Language.vanish.broadcast);
+                                                        MessageUtils.sendMessage(other.onlinePlayer(), Language.prefix, Language.vanish.broadcast, Placeholder.unparsed("player", user.player().getName()));
                                                     });
                                         }
                                     });

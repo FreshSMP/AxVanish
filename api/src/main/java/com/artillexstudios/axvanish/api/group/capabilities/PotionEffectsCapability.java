@@ -1,12 +1,11 @@
 package com.artillexstudios.axvanish.api.group.capabilities;
 
 import com.artillexstudios.axvanish.api.event.UserVanishStateChangeEvent;
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import revxrsal.commands.bukkit.Version;
 
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ public final class PotionEffectsCapability extends VanishCapability implements L
         if (effects != null) {
             for (String effect : effects) {
                 String[] split = effect.split(" ");
-                this.effects.add(new PotionEffect(Bukkit.getUnsafe().get(Registry.EFFECT, NamespacedKey.fromString(split[0])), Version.getServerVersion().isNewerThanOrEqualTo(Version.v1_19_3) ? -1 : Integer.MAX_VALUE, Integer.parseInt(split[1])));
+                this.effects.add(new PotionEffect(PotionEffectType.getByKey(NamespacedKey.minecraft(split[0])), Version.getServerVersion().isNewerThanOrEqualTo(Version.v1_19_3) ? -1 : Integer.MAX_VALUE, Integer.parseInt(split[1]), true, false));
             }
         }
     }
