@@ -86,7 +86,7 @@ public final class AxVanishCommand {
                                     VanishSource source = sender instanceof Player player ? AxVanishAPI.instance().getUserIfLoadedImmediately(player) : ConsoleVanishSource.INSTANCE;
                                     AxVanishAPI.instance().user(offlinePlayer.getUniqueId()).thenAccept(user -> {
                                         if (source instanceof User senderUser) {
-                                            if (senderUser.group() != null && user.group() != null && senderUser.group().priority() <= user.group().priority()) {
+                                            if (senderUser.group() != null && user.group() != null && senderUser.group().priority() < user.group().priority()) {
                                                 MessageUtils.sendMessage(sender, Language.prefix, Language.error.notHighEnoughGroup);
                                                 return;
                                             }
