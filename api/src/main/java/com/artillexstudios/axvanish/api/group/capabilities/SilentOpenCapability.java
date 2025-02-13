@@ -4,6 +4,7 @@ import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.users.User;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
+import org.bukkit.block.Lidded;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -40,5 +41,8 @@ public final class SilentOpenCapability extends VanishCapability implements List
         event.setUseInteractedBlock(Event.Result.DENY);
         event.setUseItemInHand(Event.Result.DENY);
         event.getPlayer().openInventory(container.getInventory());
+        if (container instanceof Lidded lidded) {
+            lidded.close();
+        }
     }
 }

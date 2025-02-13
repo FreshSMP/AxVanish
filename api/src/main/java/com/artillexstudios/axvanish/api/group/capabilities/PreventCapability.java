@@ -5,6 +5,7 @@ import com.artillexstudios.axvanish.api.users.User;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
@@ -13,6 +14,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.server.TabCompleteEvent;
 
 import java.util.ArrayList;
@@ -167,7 +169,25 @@ public final class PreventCapability extends VanishCapability implements Listene
             return;
         }
 
-        if (capability.prevents("item-drop")) {
+        if (capability.prevents("item_drop")) {
+            event.setCancelled(true);
+            user.cancelMessage();
+        }
+    }
+
+    @EventHandler
+    public void onPlayerInteractEvent(PlayerInteractEvent event) {
+        if (event.getAction() != Action.PHYSICAL) {
+            return;
+        }
+
+        User user = AxVanishAPI.instance().userOrThrow(event.getPlayer());
+        PreventCapability capability = user.capability(VanishCapabilities.PREVENT);
+        if (capability == null) {
+            return;
+        }
+
+        if (capability.prevents("physical")) {
             event.setCancelled(true);
             user.cancelMessage();
         }

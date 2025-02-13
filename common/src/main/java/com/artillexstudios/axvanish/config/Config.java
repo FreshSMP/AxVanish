@@ -47,6 +47,12 @@ public final class Config implements ConfigurationPart {
     }
 
     @Comment("""
+            The cooldown between sending the player the prohibited action message.
+            This is in milliseconds.
+            """)
+    public static int messageCooldown = 10000;
+
+    @Comment("""
             What language file should we load from the lang folder?
             You can create your own aswell! We would appreciate if you
             contributed to the plugin by creating a pull request with your translation!

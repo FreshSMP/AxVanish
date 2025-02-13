@@ -14,9 +14,10 @@ groups:
           - "block_change"
           - "entity_target"
           - "damage"
-          - "interact"
           - "pickup"
           - "hunger"
+          - "item_drop"
+          - "physical"
           - "tab_complete"
       - type: action_bar
         message: "<white>You are currently vanished!"

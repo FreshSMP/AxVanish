@@ -1,6 +1,7 @@
 package com.artillexstudios.axvanish.users;
 
 import com.artillexstudios.axapi.nms.NMSHandlers;
+import com.artillexstudios.axapi.utils.Cooldown;
 import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axapi.utils.MessageUtils;
 import com.artillexstudios.axvanish.AxVanishPlugin;
@@ -18,6 +19,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public final class User implements com.artillexstudios.axvanish.api.users.User {
+    private static final Cooldown<User> cancelCooldown = new Cooldown<>();
     private OfflinePlayer offlinePlayer;
     private Group group;
     private Player onlinePlayer;
@@ -93,7 +95,7 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
             return true;
         }
 
-        return !this.vanished;
+        return !user.vanished();
     }
 
     @Override
@@ -113,6 +115,11 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
             return;
         }
 
+        if (cancelCooldown.hasCooldown(this)) {
+            return;
+        }
+
         MessageUtils.sendMessage(player, Language.prefix, Language.error.vanished);
+        cancelCooldown.addCooldown(this, Config.messageCooldown);
     }
 }

@@ -8,6 +8,8 @@ import com.artillexstudios.axvanish.api.context.VanishContext;
 import com.artillexstudios.axvanish.api.context.VanishSource;
 import com.artillexstudios.axvanish.api.context.source.CommandVanishSource;
 import com.artillexstudios.axvanish.api.context.source.ConsoleVanishSource;
+import com.artillexstudios.axvanish.api.context.source.ForceVanishSource;
+import com.artillexstudios.axvanish.api.context.source.ReloadVanishSource;
 import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.config.Config;
 import com.artillexstudios.axvanish.config.Groups;
@@ -154,6 +156,16 @@ public final class AxVanishCommand {
 
                                     if (!Groups.reload()) {
                                         failed.add("groups.yml");
+                                    }
+
+                                    for (User user : AxVanishAPI.instance().online()) {
+                                        if (user.vanished()) {
+                                            user.update(false, new VanishContext.Builder()
+                                                    .withSource(ReloadVanishSource.INSTANCE)
+                                                    .withSource(ForceVanishSource.INSTANCE)
+                                                    .build()
+                                            );
+                                        }
                                     }
 
                                     if (failed.isEmpty()) {
