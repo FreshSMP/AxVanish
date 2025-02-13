@@ -10,6 +10,7 @@ import com.artillexstudios.axvanish.config.Language;
 import com.artillexstudios.axvanish.database.DataHandler;
 import com.artillexstudios.axvanish.listeners.PlayerListener;
 import com.artillexstudios.axvanish.utils.VanishStateManager;
+import com.artillexstudios.axvanish.utils.VanishStateManagerFactory;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import org.bukkit.Bukkit;
@@ -19,7 +20,7 @@ public final class AxVanishPlugin extends AxPlugin {
     private final JavaPlugin plugin;
     private static AxVanishPlugin instance;
     private AxMetrics metrics;
-    private VanishStateManager stateManager;
+    private VanishStateManagerFactory stateManagerFactory;
 
     public AxVanishPlugin(JavaPlugin plugin) {
         super(plugin);
@@ -50,7 +51,7 @@ public final class AxVanishPlugin extends AxPlugin {
 
     @Override
     public void enable() {
-        this.stateManager = new VanishStateManager(this.plugin);
+        this.stateManagerFactory = new VanishStateManagerFactory(this.plugin);
         new AxVanishCommand(this).register();
         Groups.reload();
         CommandAPI.onEnable();
@@ -65,8 +66,8 @@ public final class AxVanishPlugin extends AxPlugin {
         CommandAPI.onDisable();
     }
 
-    public VanishStateManager stateManager() {
-        return this.stateManager;
+    public VanishStateManagerFactory stateManagerFactory() {
+        return this.stateManagerFactory;
     }
 
     public static AxVanishPlugin instance() {

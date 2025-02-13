@@ -1,6 +1,8 @@
 package com.artillexstudios.axvanish.utils;
 
+import com.artillexstudios.axapi.scheduler.Scheduler;
 import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.mutable.MutableInteger;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.config.Config;
@@ -9,17 +11,28 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class VanishStateManager {
     private final JavaPlugin plugin;
+    private final User user;
+    private final CountDownLatch latch = new CountDownLatch(1);
 
-    public VanishStateManager(JavaPlugin plugin) {
+    public VanishStateManager(JavaPlugin plugin, User user) {
         this.plugin = plugin;
+        this.user = user;
+        this.latch.countDown();
     }
 
-    public void updateViewers(User user, boolean current) {
-        ThreadUtils.ensureMain("updateViewers can only be called from the main thread!");
-        Player player = user.onlinePlayer();
+    public void updateViewers(boolean current) {
+        try {
+            this.latch.await();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        Player player = this.user.onlinePlayer();
         if (player == null) {
             return;
         }
@@ -33,38 +46,66 @@ public final class VanishStateManager {
                 LogUtils.debug("Vanish state changed!");
             }
             if (current) {
-                user.onlinePlayer().setMetadata("vanished", new FixedMetadataValue(this.plugin, true));
+                player.setMetadata("vanished", new FixedMetadataValue(this.plugin, true));
             } else {
-                user.onlinePlayer().removeMetadata("vanished", this.plugin);
+                player.removeMetadata("vanished", this.plugin);
             }
             player.setVisibleByDefault(!current);
         }
+
         List<User> onlineUsers = AxVanishAPI.instance().online();
+        MutableInteger playerCounter = new MutableInteger(onlineUsers.size());
+        AtomicInteger counter = new AtomicInteger();
         for (User online : onlineUsers) {
             Player onlinePlayer = online.onlinePlayer();
             if (onlinePlayer == null) {
+                playerCounter.set(playerCounter.intValue() - 1);
                 continue;
             }
 
             // We want to be sure that only people who can see the player
             // can see the player. This is not a mistake
             if (Config.debug) {
-                LogUtils.debug("Can {} see {}: {}", onlinePlayer.getName(), player.getName(), online.canSee(user));
+                LogUtils.debug("Can {} see {}: {}", onlinePlayer.getName(), player.getName(), online.canSee(this.user));
             }
-            if (online.canSee(user)) {
-                onlinePlayer.showPlayer(this.plugin, player);
+            if (online.canSee(this.user)) {
+                Scheduler.get().run(onlinePlayer, task -> {
+                    onlinePlayer.showPlayer(this.plugin, player);
+                    this.count(playerCounter, counter);
+                }, () -> {
+                });
             } else {
-                onlinePlayer.hidePlayer(this.plugin, player);
+                Scheduler.get().run(onlinePlayer, task -> {
+                    onlinePlayer.hidePlayer(this.plugin, player);
+                    this.count(playerCounter, counter);
+                }, () -> {
+                });
             }
 
             if (Config.debug) {
-                LogUtils.debug("Can {} see {}: {}", player.getName(), onlinePlayer.getName(), user.canSee(online));
+                LogUtils.debug("Can {} see {}: {}", player.getName(), onlinePlayer.getName(), this.user.canSee(online));
             }
-            if (user.canSee(online)) {
-                player.showPlayer(this.plugin, onlinePlayer);
+            if (this.user.canSee(online)) {
+                Scheduler.get().run(onlinePlayer, task -> {
+                    player.showPlayer(this.plugin, onlinePlayer);
+                    this.count(playerCounter, counter);
+                }, () -> {
+                });
             } else {
-                player.hidePlayer(this.plugin, onlinePlayer);
+                Scheduler.get().run(onlinePlayer, task -> {
+                    player.hideEntity(this.plugin, onlinePlayer);
+                    this.count(playerCounter, counter);
+                }, () -> {
+                });
             }
         }
+    }
+
+    private void count(MutableInteger mutableInteger, AtomicInteger integer) {
+        if (integer.incrementAndGet() < mutableInteger.intValue()) {
+            return;
+        }
+
+        this.latch.countDown();
     }
 }

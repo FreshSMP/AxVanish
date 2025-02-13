@@ -12,6 +12,7 @@ import com.artillexstudios.axvanish.api.group.Group;
 import com.artillexstudios.axvanish.config.Config;
 import com.artillexstudios.axvanish.config.Language;
 import com.artillexstudios.axvanish.database.DataHandler;
+import com.artillexstudios.axvanish.utils.VanishStateManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -21,12 +22,14 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
     private Group group;
     private Player onlinePlayer;
     private boolean vanished;
+    private final VanishStateManager stateManager;
 
     public User(OfflinePlayer player, Player onlinePlayer, Group group, boolean vanished) {
         this.onlinePlayer = onlinePlayer;
         this.offlinePlayer = player;
         this.group = group;
         this.vanished = vanished;
+        this.stateManager = AxVanishPlugin.instance().stateManagerFactory().create(this);
     }
 
     public void group(Group group) {
@@ -59,12 +62,12 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
         if (event.call() || context.getSource(ForceVanishSource.class) != null) {
             this.vanished = vanished;
             new UserVanishStateChangeEvent(this, prev, vanished, context).call();
-            AxVanishPlugin.instance().stateManager().updateViewers(this, this.vanished);
+            this.stateManager.updateViewers(this.vanished);
             DataHandler.save(this);
             return true;
         }
 
-        AxVanishPlugin.instance().stateManager().updateViewers(this, this.vanished);
+        this.stateManager.updateViewers(this.vanished);
         return false;
     }
 
