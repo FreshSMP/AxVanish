@@ -9,6 +9,7 @@ import com.artillexstudios.axvanish.config.Groups;
 import com.artillexstudios.axvanish.config.Language;
 import com.artillexstudios.axvanish.database.DataHandler;
 import com.artillexstudios.axvanish.listeners.PlayerListener;
+import com.artillexstudios.axvanish.placeholders.PlaceholderRegistry;
 import com.artillexstudios.axvanish.utils.VanishStateManager;
 import com.artillexstudios.axvanish.utils.VanishStateManagerFactory;
 import dev.jorel.commandapi.CommandAPI;
@@ -57,6 +58,7 @@ public final class AxVanishPlugin extends AxPlugin {
         CommandAPI.onEnable();
 
         Bukkit.getPluginManager().registerEvents(new PlayerListener(this.plugin), this.plugin);
+        PlaceholderRegistry.INSTANCE.register();
     }
 
     @Override

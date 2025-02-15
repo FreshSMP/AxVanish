@@ -1,6 +1,5 @@
 package com.artillexstudios.axvanish.api.group.capabilities;
 
-import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axapi.utils.RandomStringGenerator;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.users.User;
@@ -198,13 +197,22 @@ public final class PreventCapability extends VanishCapability implements Listene
 
     @EventHandler
     public void onTabCompleteEvent(TabCompleteEvent event) {
+        if (!(event.getSender() instanceof Player player)) {
+            return;
+        }
+
+        User completer = AxVanishAPI.instance().getUserIfLoadedImmediately(player);
+        if (completer == null) {
+            return;
+        }
+
         // TODO: User AsyncTabCompleteEvent on papers -> maybe need an api to register events based on paper/spigot
         List<String> vanishedPlayers = AxVanishAPI.instance().vanished()
                 .stream()
                 .filter(user -> {
                     PreventCapability capability = user.capability(VanishCapabilities.PREVENT);
                     if (capability.prevents("tab_complete")) {
-                        return user.onlinePlayer() != null;
+                        return user.onlinePlayer() != null && !completer.canSee(user);
                     }
 
                     return false;
@@ -225,12 +233,17 @@ public final class PreventCapability extends VanishCapability implements Listene
 
     @EventHandler
     public void onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent event) {
+        User executor = AxVanishAPI.instance().getUserIfLoadedImmediately(event.getPlayer());
+        if (executor == null) {
+            return;
+        }
+
         List<String> vanishedPlayers = AxVanishAPI.instance().vanished()
                 .stream()
                 .filter(user -> {
                     PreventCapability capability = user.capability(VanishCapabilities.PREVENT);
                     if (capability.prevents("command_use")) {
-                        return user.onlinePlayer() != null;
+                        return user.onlinePlayer() != null && !executor.canSee(user);
                     }
 
                     return false;
