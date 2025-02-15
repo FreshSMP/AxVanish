@@ -4,11 +4,9 @@ import com.artillexstudios.axapi.libs.caffeine.caffeine.cache.Cache;
 import com.artillexstudios.axapi.libs.caffeine.caffeine.cache.Caffeine;
 import com.artillexstudios.axvanish.api.LoadContext;
 import com.artillexstudios.axvanish.api.users.User;
-import com.artillexstudios.axvanish.config.Groups;
 import com.artillexstudios.axvanish.database.DataHandler;
 import com.artillexstudios.axvanish.exception.UserAlreadyLoadedException;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import org.bukkit.Bukkit;
 
 import java.util.List;
 import java.util.Optional;
@@ -84,7 +82,7 @@ public final class Users {
     public static List<User> vanished() {
         ObjectArrayList<User> vanished = new ObjectArrayList<>();
         for (User user : loadedUsers.values()) {
-            if (user.vanished()) {
+            if (user.onlinePlayer() != null && user.vanished()) {
                 vanished.add(user);
             }
         }

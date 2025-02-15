@@ -31,6 +31,7 @@ public final class MessageCapability extends VanishCapability implements Listene
 
     @EventHandler
     public void onUserVanishStateChangeEvent(UserVanishStateChangeEvent event) {
+        Player onlinePlayer = event.user().onlinePlayer();
         MessageCapability capability = event.user().capability(VanishCapabilities.MESSAGE);
         if (capability == null) {
             return;
@@ -54,7 +55,7 @@ public final class MessageCapability extends VanishCapability implements Listene
         }
 
         if (ClassUtils.INSTANCE.classExists("me.clip.placeholderapi.PlaceholderAPI")) {
-            message = PlaceholderAPI.setPlaceholders(event.user().onlinePlayer(), message);
+            message = PlaceholderAPI.setPlaceholders(onlinePlayer == null ? event.user().player() : onlinePlayer, message);
         }
 
         Component formatted = StringUtils.format(message);

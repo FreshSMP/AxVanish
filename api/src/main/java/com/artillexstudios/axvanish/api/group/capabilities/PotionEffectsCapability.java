@@ -2,6 +2,7 @@ package com.artillexstudios.axvanish.api.group.capabilities;
 
 import com.artillexstudios.axvanish.api.event.UserVanishStateChangeEvent;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffect;
@@ -33,6 +34,11 @@ public final class PotionEffectsCapability extends VanishCapability implements L
 
     @EventHandler
     public void onUserVanishStateChangeEvent(UserVanishStateChangeEvent event) {
+        Player player = event.user().onlinePlayer();
+        if (player == null) {
+            return;
+        }
+
         PotionEffectsCapability capability = event.user().capability(VanishCapabilities.POTION_EFFECTS);
         if (capability == null) {
             return;

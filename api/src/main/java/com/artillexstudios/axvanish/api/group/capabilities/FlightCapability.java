@@ -1,6 +1,8 @@
 package com.artillexstudios.axvanish.api.group.capabilities;
 
 import com.artillexstudios.axvanish.api.event.UserVanishStateChangeEvent;
+import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -14,18 +16,28 @@ public final class FlightCapability extends VanishCapability implements Listener
 
     @EventHandler
     public void onUserVanishStateChangeEvent(UserVanishStateChangeEvent event) {
+        Player player = event.user().onlinePlayer();
+        if (player == null) {
+            return;
+        }
+
         if (!event.user().hasCapability(VanishCapabilities.FLIGHT)) {
             return;
         }
 
         if (event.newState()) {
-            event.user().onlinePlayer().setAllowFlight(true);
+            player.setAllowFlight(true);
 
-            if (!event.user().onlinePlayer().isFlying()) {
-                event.user().onlinePlayer().setFlying(true);
+            if (!player.isFlying()) {
+                player.setFlying(true);
             }
         } else {
-            event.user().onlinePlayer().setAllowFlight(false);
+            if (player.getGameMode() == GameMode.SPECTATOR || player.getGameMode() == GameMode.CREATIVE) {
+                return;
+            }
+
+            player.setFlying(false);
+            player.setAllowFlight(false);
         }
     }
 }

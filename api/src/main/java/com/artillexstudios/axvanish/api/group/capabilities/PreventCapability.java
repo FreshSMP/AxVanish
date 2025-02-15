@@ -1,5 +1,7 @@
 package com.artillexstudios.axvanish.api.group.capabilities;
 
+import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.RandomStringGenerator;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.users.User;
 import org.bukkit.entity.Player;
@@ -13,6 +15,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.server.TabCompleteEvent;
@@ -216,6 +219,27 @@ public final class PreventCapability extends VanishCapability implements Listene
             if (vanishedPlayers.contains(next)) {
                 completionIterator.remove();
             }
+        }
+    }
+
+
+    @EventHandler
+    public void onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent event) {
+        List<String> vanishedPlayers = AxVanishAPI.instance().vanished()
+                .stream()
+                .filter(user -> {
+                    PreventCapability capability = user.capability(VanishCapabilities.PREVENT);
+                    if (capability.prevents("command_use")) {
+                        return user.onlinePlayer() != null;
+                    }
+
+                    return false;
+                })
+                .map(user -> user.onlinePlayer().getName())
+                .toList();
+
+        for (String vanishedPlayer : vanishedPlayers) {
+            event.setMessage(event.getMessage().replace(vanishedPlayer, RandomStringGenerator.lowercase().generate(5)));
         }
     }
 }
