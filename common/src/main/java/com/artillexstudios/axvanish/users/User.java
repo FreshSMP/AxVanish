@@ -62,10 +62,19 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
         boolean prev = this.vanished;
         UserPreVanishStateChangeEvent event = new UserPreVanishStateChangeEvent(this, this.vanished, vanished, context);
         if (event.call() || context.getSource(ForceVanishSource.class) != null) {
+            if (vanished) {
+                this.vanished = true;
+            }
+
             new UserVanishStateChangeEvent(this, prev, vanished, context).call();
-            this.vanished = vanished;
+            if (!vanished) {
+                this.vanished = false;
+            }
+
             this.stateManager.updateViewers(this.vanished);
-            DataHandler.save(this);
+            if (this.vanished != prev) {
+                DataHandler.save(this);
+            }
             return true;
         }
 

@@ -3,6 +3,8 @@ package com.artillexstudios.axvanish.api.group.capabilities;
 import com.artillexstudios.axapi.utils.RandomStringGenerator;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.users.User;
+import org.bukkit.block.Block;
+import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -179,7 +181,12 @@ public final class PreventCapability extends VanishCapability implements Listene
 
     @EventHandler
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
-        if (event.getAction() != Action.PHYSICAL) {
+        if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
+            return;
+        }
+
+        Block block = event.getClickedBlock();
+        if (block != null && block.getState() instanceof Container) {
             return;
         }
 
@@ -189,7 +196,7 @@ public final class PreventCapability extends VanishCapability implements Listene
             return;
         }
 
-        if (capability.prevents("physical")) {
+        if (capability.prevents("interact")) {
             event.setCancelled(true);
             user.cancelMessage();
         }

@@ -46,9 +46,9 @@ public final class PotionEffectsCapability extends VanishCapability implements L
 
         for (PotionEffect effect : capability.effects()) {
             if (event.newState()) {
-                event.user().onlinePlayer().addPotionEffect(effect);
+                player.addPotionEffect(effect);
             } else {
-                event.user().onlinePlayer().removePotionEffect(effect.getType());
+                player.removePotionEffect(effect.getType());
             }
         }
     }

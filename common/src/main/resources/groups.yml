@@ -17,8 +17,9 @@ groups:
           - "pickup"
           - "hunger"
           - "item_drop"
-          - "physical"
+          - "interact"
           - "tab_complete"
+          - "command_use"
       - type: action_bar
         message: "<white>You are currently vanished!"
         refresh-interval: 20 # In ticks
