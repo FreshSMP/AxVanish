@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 
@@ -43,10 +44,17 @@ public final class SilentOpenCapability extends VanishCapability implements List
         }
 
         event.setCancelled(true);
-        Inventory inventory = Bukkit.createInventory(null, container.getInventory().getSize(), container.getCustomName() == null ? container.getInventory().getType().getDefaultTitle() : container.getCustomName());
-        inventory.setContents(container.getInventory().getContents());
-        inventories.put(event.getPlayer().getUniqueId(), container.getInventory());
-        event.getPlayer().openInventory(inventory);
+        if (container.getInventory().getType() == InventoryType.BARREL || container.getInventory().getType() == InventoryType.CHEST || container.getInventory().getType() == InventoryType.ENDER_CHEST) {
+            Inventory inventory = Bukkit.createInventory(null, container.getInventory().getSize(), container.getCustomName() == null ? container.getInventory().getType().getDefaultTitle() : container.getCustomName());
+            inventory.setContents(container.getInventory().getContents());
+            inventories.put(event.getPlayer().getUniqueId(), container.getInventory());
+            event.getPlayer().openInventory(inventory);
+        } else {
+            Inventory inventory = Bukkit.createInventory(null, container.getInventory().getType(), container.getCustomName() == null ? container.getInventory().getType().getDefaultTitle() : container.getCustomName());
+            inventory.setContents(container.getInventory().getContents());
+            inventories.put(event.getPlayer().getUniqueId(), container.getInventory());
+            event.getPlayer().openInventory(inventory);
+        }
     }
 
 

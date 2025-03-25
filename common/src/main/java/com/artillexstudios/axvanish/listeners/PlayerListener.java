@@ -1,6 +1,6 @@
 package com.artillexstudios.axvanish.listeners;
 
-import com.artillexstudios.axapi.utils.StringUtils;
+import com.artillexstudios.axapi.utils.FileLogger;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.context.VanishContext;
 import com.artillexstudios.axvanish.api.context.source.DisconnectVanishSource;
@@ -21,6 +21,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class PlayerListener implements Listener {
+    private final FileLogger logger = new FileLogger("join-logs");
     private final JavaPlugin plugin;
 
     public PlayerListener(JavaPlugin plugin) {
@@ -29,17 +30,27 @@ public final class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onAsyncPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event) {
+        if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
+            this.logger.log("User %s asyncplayerpreloginevent was cancelled!".formatted(event.getName()));
+            return;
+        }
+
+        this.logger.log("User %s asyncplayerpreloginevent!".formatted(event.getName()));
+
         try {
             User user = Users.loadUser(event.getUniqueId()).join();
+            this.logger.log("User %s asyncplayerpreloginevent finished!".formatted(event.getName()));
         } catch (UserAlreadyLoadedException exception) {
-            event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-            event.setKickMessage(StringUtils.formatToString(Language.prefix + Language.error.failedToLoadUserData));
+//            event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+//            event.setKickMessage(StringUtils.formatToString(Language.prefix + Language.error.failedToLoadUserData));
+            this.logger.log("UserAlreadyLoadedException for user: %s. How did this happen?".formatted(event.getName()));
         }
     }
 
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        this.logger.log("User join: %s.".formatted(event.getPlayer().getName()));
         User user = AxVanishAPI.instance().userOrThrow(player);
         ((com.artillexstudios.axvanish.users.User) user).onlinePlayer(player);
         ((com.artillexstudios.axvanish.users.User) user).group(PermissionUtils.INSTANCE.group(player));
@@ -66,6 +77,7 @@ public final class PlayerListener implements Listener {
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         User user = Users.disconnect(player.getUniqueId());
+        this.logger.log("User disconnect: %s.".formatted(event.getPlayer().getName()));
 
         user.update(user.vanished(), new VanishContext.Builder()
                 .withSource(DisconnectVanishSource.INSTANCE)

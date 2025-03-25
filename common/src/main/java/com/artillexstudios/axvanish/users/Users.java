@@ -1,11 +1,12 @@
 package com.artillexstudios.axvanish.users;
 
-import com.artillexstudios.axapi.libs.caffeine.caffeine.cache.Cache;
-import com.artillexstudios.axapi.libs.caffeine.caffeine.cache.Caffeine;
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axvanish.api.LoadContext;
 import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.database.DataHandler;
 import com.artillexstudios.axvanish.exception.UserAlreadyLoadedException;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.List;
@@ -46,6 +47,9 @@ public final class Users {
 
     public static CompletableFuture<User> loadUser(UUID uuid) throws UserAlreadyLoadedException {
         if (loadedUsers.containsKey(uuid)) {
+            User loaded = loadedUsers.get(uuid);
+            loadedUsers.put(uuid, loaded);
+            LogUtils.warn("User was already loaded, falling back to already created user instance!");
             throw new UserAlreadyLoadedException();
         }
 

@@ -30,8 +30,8 @@ subprojects {
     }
 
     dependencies {
-        implementation("com.artillexstudios.axapibootstrapper:axapi-bootstrapper:1.0.21:all")
-        compileOnly("com.artillexstudios.axapi:axapi:1.4.531:all")
+        implementation("com.artillexstudios.axapi:axapi:1.4.547:all")
+        compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.0")
         compileOnly("org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT")
         compileOnly("dev.jorel:commandapi-bukkit-shade:9.7.0")
         compileOnly("org.apache.commons:commons-lang3:3.14.0")
@@ -51,9 +51,9 @@ tasks {
     }
 
     shadowJar {
-        relocate("com.artillexstudios.axapibootstrapper", "com.artillexstudios.axvanish.libs.axapibootstrapper")
         relocate("com.artillexstudios.axapi", "com.artillexstudios.axvanish.libs.axapi")
         relocate("dev.jorel.commandapi", "com.artillexstudios.axvanish.libs.commandapi")
+        relocate("com.github.benmanes", "com.artillexstudios.axvanish.libs.axapi.libs.caffeine")
         relocate("com.zaxxer", "com.artillexstudios.axvanish.libs.hikaricp")
         relocate("org.jooq", "com.artillexstudios.axvanish.libs.jooq")
         relocate("org.h2", "com.artillexstudios.axvanish.libs.h2")

@@ -14,6 +14,8 @@ import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.config.Config;
 import com.artillexstudios.axvanish.config.Groups;
 import com.artillexstudios.axvanish.config.Language;
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import dev.jorel.commandapi.CommandTree;
 import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
@@ -30,6 +32,22 @@ public final class AxVanishCommand {
 
     public AxVanishCommand(AxVanishPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    public void load() {
+        CommandAPI.onLoad(new CommandAPIBukkitConfig(this.plugin)
+                .skipReloadDatapacks(true)
+                .setNamespace("axvanish")
+        );
+    }
+
+    public void enable() {
+        CommandAPI.onEnable();
+
+    }
+
+    public void disable() {
+        CommandAPI.onDisable();
     }
 
     public void register() {

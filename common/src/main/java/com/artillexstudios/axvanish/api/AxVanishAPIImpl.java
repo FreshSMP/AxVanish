@@ -3,7 +3,6 @@ package com.artillexstudios.axvanish.api;
 import com.artillexstudios.axapi.AxPlugin;
 import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.users.Users;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +31,7 @@ public final class AxVanishAPIImpl implements AxVanishAPI {
     }
 
     @Override
-    public JavaPlugin plugin() {
-        return AxPlugin.getPlugin();
+    public AxPlugin plugin() {
+        return AxPlugin.getPlugin(AxPlugin.class);
     }
 }

@@ -1,6 +1,5 @@
 package com.artillexstudios.axvanish.api.group.capabilities;
 
-import com.artillexstudios.axapi.AxPlugin;
 import com.artillexstudios.axapi.reflection.ClassUtils;
 import com.artillexstudios.axapi.scheduler.Scheduler;
 import com.artillexstudios.axapi.utils.ActionBar;
@@ -17,7 +16,7 @@ public final class ActionBarCapability extends VanishCapability {
 
     public ActionBarCapability(long refreshInterval, String message) {
         super(null);
-        ActionBar cached = AxPlugin.flags().PLACEHOLDER_PATTERNS.get()
+        ActionBar cached = AxVanishAPI.instance().plugin().flags().PLACEHOLDER_PATTERNS.get()
                 .stream()
                 .map(pattern -> pattern.matcher(message))
                 .anyMatch(Matcher::find) ? null : ActionBar.create(StringUtils.format(message));

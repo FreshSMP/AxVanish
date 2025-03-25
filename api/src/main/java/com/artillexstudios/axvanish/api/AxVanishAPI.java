@@ -37,7 +37,7 @@ public interface AxVanishAPI {
     /**
      * Get a user by their uuid, even if the player isn't online at the time
      * @param uuid The uuid of the player
-     * @return A completablefuture of an user
+     * @return A completablefuture of a user
      */
     CompletableFuture<User> user(UUID uuid);
 
@@ -53,7 +53,7 @@ public interface AxVanishAPI {
      */
     List<User> vanished();
 
-    JavaPlugin plugin();
+    AxPlugin plugin();
 
     default void broadcast(User user, String message) {
         this.broadcast(user, "", message);

@@ -52,7 +52,11 @@ public final class PreventCapability extends VanishCapability implements Listene
 
     @EventHandler
     public void onBlockBreakEvent(BlockBreakEvent event) {
-        User user = AxVanishAPI.instance().userOrThrow(event.getPlayer());
+        User user = AxVanishAPI.instance().getUserIfLoadedImmediately(event.getPlayer());
+        if (user == null) {
+            return;
+        }
+
         PreventCapability capability = user.capability(VanishCapabilities.PREVENT);
         if (capability == null) {
             return;
@@ -66,7 +70,11 @@ public final class PreventCapability extends VanishCapability implements Listene
 
     @EventHandler
     public void onBlockPlaceEvent(BlockPlaceEvent event) {
-        User user = AxVanishAPI.instance().userOrThrow(event.getPlayer());
+        User user = AxVanishAPI.instance().getUserIfLoadedImmediately(event.getPlayer());
+        if (user == null) {
+            return;
+        }
+
         PreventCapability capability = user.capability(VanishCapabilities.PREVENT);
         if (capability == null) {
             return;
@@ -84,7 +92,11 @@ public final class PreventCapability extends VanishCapability implements Listene
             return;
         }
 
-        User user = AxVanishAPI.instance().userOrThrow(player);
+        User user = AxVanishAPI.instance().getUserIfLoadedImmediately(player);
+        if (user == null) {
+            return;
+        }
+
         PreventCapability capability = user.capability(VanishCapabilities.PREVENT);
         if (capability == null) {
             return;
@@ -101,7 +113,11 @@ public final class PreventCapability extends VanishCapability implements Listene
         if (!(event.getTarget() instanceof Player player)) {
             return;
         }
-        User user = AxVanishAPI.instance().userOrThrow(player);
+        User user = AxVanishAPI.instance().getUserIfLoadedImmediately(player);
+        if (user == null) {
+            return;
+        }
+
         PreventCapability capability = user.capability(VanishCapabilities.PREVENT);
         if (capability == null) {
             return;
@@ -118,7 +134,11 @@ public final class PreventCapability extends VanishCapability implements Listene
             return;
         }
 
-        User user = AxVanishAPI.instance().userOrThrow(player);
+        User user = AxVanishAPI.instance().getUserIfLoadedImmediately(player);
+        if (user == null) {
+            return;
+        }
+
         PreventCapability capability = user.capability(VanishCapabilities.PREVENT);
         if (capability == null) {
             return;
@@ -136,7 +156,11 @@ public final class PreventCapability extends VanishCapability implements Listene
             return;
         }
 
-        User user = AxVanishAPI.instance().userOrThrow(player);
+        User user = AxVanishAPI.instance().getUserIfLoadedImmediately(player);
+        if (user == null) {
+            return;
+        }
+
         PreventCapability capability = user.capability(VanishCapabilities.PREVENT);
         if (capability == null) {
             return;
@@ -154,7 +178,11 @@ public final class PreventCapability extends VanishCapability implements Listene
             return;
         }
 
-        User user = AxVanishAPI.instance().userOrThrow(player);
+        User user = AxVanishAPI.instance().getUserIfLoadedImmediately(player);
+        if (user == null) {
+            return;
+        }
+
         PreventCapability capability = user.capability(VanishCapabilities.PREVENT);
         if (capability == null) {
             return;
@@ -167,7 +195,11 @@ public final class PreventCapability extends VanishCapability implements Listene
 
     @EventHandler
     public void onPlayerDropItemEvent(PlayerDropItemEvent event) {
-        User user = AxVanishAPI.instance().userOrThrow(event.getPlayer());
+        User user = AxVanishAPI.instance().getUserIfLoadedImmediately(event.getPlayer());
+        if (user == null) {
+            return;
+        }
+
         PreventCapability capability = user.capability(VanishCapabilities.PREVENT);
         if (capability == null) {
             return;
@@ -190,7 +222,11 @@ public final class PreventCapability extends VanishCapability implements Listene
             return;
         }
 
-        User user = AxVanishAPI.instance().userOrThrow(event.getPlayer());
+        User user = AxVanishAPI.instance().getUserIfLoadedImmediately(event.getPlayer());
+        if (user == null) {
+            return;
+        }
+
         PreventCapability capability = user.capability(VanishCapabilities.PREVENT);
         if (capability == null) {
             return;

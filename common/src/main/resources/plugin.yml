@@ -1,5 +1,5 @@
 name: "AxVanish"
-main: "com.artillexstudios.axvanish.libs.axapibootstrapper.AxAPIBootstrapper"
+main: "com.artillexstudios.axvanish.AxVanishPlugin"
 version: "${version}"
 api-version: "1.18"
 folia-supported: true

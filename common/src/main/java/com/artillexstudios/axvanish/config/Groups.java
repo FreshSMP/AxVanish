@@ -34,7 +34,7 @@ public final class Groups {
 
         if (this.config == null) {
             this.config = YamlConfiguration.of(path)
-                    .withDefaults(AxPlugin.getPlugin().getResource("groups.yml"))
+                    .withDefaults(AxPlugin.getPlugin(AxPlugin.class).getResource("groups.yml"))
                     .configVersion(1, "config-version")
                     .withDumperOptions(options -> {
                         options.setPrettyFlow(true);
