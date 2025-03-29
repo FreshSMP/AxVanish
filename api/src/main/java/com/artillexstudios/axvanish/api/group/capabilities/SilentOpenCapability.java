@@ -1,9 +1,10 @@
 package com.artillexstudios.axvanish.api.group.capabilities;
 
-import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.users.User;
+import com.artillexstudios.axapi.scheduler.Scheduler;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
@@ -39,24 +40,26 @@ public final class SilentOpenCapability extends VanishCapability implements List
             return;
         }
 
-        if (!(block.getState() instanceof Container container)) {
-            return;
-        }
-
         event.setCancelled(true);
-        if (container.getInventory().getType() == InventoryType.BARREL || container.getInventory().getType() == InventoryType.CHEST || container.getInventory().getType() == InventoryType.ENDER_CHEST) {
-            Inventory inventory = Bukkit.createInventory(null, container.getInventory().getSize(), container.getCustomName() == null ? container.getInventory().getType().getDefaultTitle() : container.getCustomName());
-            inventory.setContents(container.getInventory().getContents());
-            inventories.put(event.getPlayer().getUniqueId(), container.getInventory());
-            event.getPlayer().openInventory(inventory);
-        } else {
-            Inventory inventory = Bukkit.createInventory(null, container.getInventory().getType(), container.getCustomName() == null ? container.getInventory().getType().getDefaultTitle() : container.getCustomName());
-            inventory.setContents(container.getInventory().getContents());
-            inventories.put(event.getPlayer().getUniqueId(), container.getInventory());
-            event.getPlayer().openInventory(inventory);
-        }
-    }
+        Location location = block.getLocation();
 
+        Scheduler.get().runAt(location, scheduledTask -> {
+            if (!(block.getState() instanceof Container container)) {
+                return;
+            }
+
+            Inventory inventory;
+            if (container.getInventory().getType() == InventoryType.BARREL || container.getInventory().getType() == InventoryType.CHEST || container.getInventory().getType() == InventoryType.ENDER_CHEST) {
+                inventory = Bukkit.createInventory(null, container.getInventory().getSize(), container.getCustomName() == null ? container.getInventory().getType().getDefaultTitle() : container.getCustomName());
+            } else {
+                inventory = Bukkit.createInventory(null, container.getInventory().getType(), container.getCustomName() == null ? container.getInventory().getType().getDefaultTitle() : container.getCustomName());
+            }
+
+            inventory.setContents(container.getInventory().getContents());
+            inventories.put(player.getUniqueId(), container.getInventory());
+            player.openInventory(inventory);
+        });
+    }
 
     @EventHandler
     public void onInventoryCloseEvent(InventoryCloseEvent event) {
@@ -65,6 +68,7 @@ public final class SilentOpenCapability extends VanishCapability implements List
             return;
         }
 
-        other.setContents(event.getView().getTopInventory().getContents());
+        Location location = event.getPlayer().getLocation();
+        Scheduler.get().runAt(location, scheduledTask -> other.setContents(event.getView().getTopInventory().getContents()));
     }
 }
