@@ -43,36 +43,36 @@ public final class SilentOpenCapability extends VanishCapability implements List
         event.setCancelled(true);
         Location location = clickedBlock.getLocation();
 
-        Scheduler.get().runAt(location, scheduledTask -> {
-            Block block = location.getBlock();
-            if (!(block.getState() instanceof Container container)) {
+        Scheduler.get().runAt(location, task -> {
+            if (!(clickedBlock.getState() instanceof Container container)) {
                 return;
             }
 
-            Inventory inventory;
-            InventoryType type = container.getInventory().getType();
+            Inventory original = container.getInventory();
+            InventoryType type = original.getType();
             String title = container.getCustomName() == null ? type.getDefaultTitle() : container.getCustomName();
 
+            Inventory copy;
             if (type == InventoryType.BARREL || type == InventoryType.CHEST || type == InventoryType.ENDER_CHEST) {
-                inventory = Bukkit.createInventory(null, container.getInventory().getSize(), title);
+                copy = Bukkit.createInventory(null, original.getSize(), title);
             } else {
-                inventory = Bukkit.createInventory(null, type, title);
+                copy = Bukkit.createInventory(null, type, title);
             }
 
-            inventory.setContents(container.getInventory().getContents());
-            inventories.put(player.getUniqueId(), container.getInventory());
-            player.openInventory(inventory);
+            copy.setContents(original.getContents());
+            inventories.put(player.getUniqueId(), original);
+            player.openInventory(copy);
         });
     }
 
     @EventHandler
     public void onInventoryCloseEvent(InventoryCloseEvent event) {
-        Inventory other = inventories.remove(event.getPlayer().getUniqueId());
-        if (other == null) {
-            return;
-        }
+        UUID playerId = event.getPlayer().getUniqueId();
+        Inventory original = inventories.remove(playerId);
+        if (original == null) return;
 
         Location location = event.getPlayer().getLocation();
-        Scheduler.get().runAt(location, scheduledTask -> other.setContents(event.getView().getTopInventory().getContents()));
+
+        Scheduler.get().runAt(location, task -> original.setContents(event.getView().getTopInventory().getContents()));
     }
 }
