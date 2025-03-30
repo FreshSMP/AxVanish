@@ -35,24 +35,28 @@ public final class SilentOpenCapability extends VanishCapability implements List
             return;
         }
 
-        Block block = event.getClickedBlock();
-        if (block == null) {
+        Block clickedBlock = event.getClickedBlock();
+        if (clickedBlock == null) {
             return;
         }
 
         event.setCancelled(true);
-        Location location = block.getLocation();
+        Location location = clickedBlock.getLocation();
 
         Scheduler.get().runAt(location, scheduledTask -> {
+            Block block = location.getBlock();
             if (!(block.getState() instanceof Container container)) {
                 return;
             }
 
             Inventory inventory;
-            if (container.getInventory().getType() == InventoryType.BARREL || container.getInventory().getType() == InventoryType.CHEST || container.getInventory().getType() == InventoryType.ENDER_CHEST) {
-                inventory = Bukkit.createInventory(null, container.getInventory().getSize(), container.getCustomName() == null ? container.getInventory().getType().getDefaultTitle() : container.getCustomName());
+            InventoryType type = container.getInventory().getType();
+            String title = container.getCustomName() == null ? type.getDefaultTitle() : container.getCustomName();
+
+            if (type == InventoryType.BARREL || type == InventoryType.CHEST || type == InventoryType.ENDER_CHEST) {
+                inventory = Bukkit.createInventory(null, container.getInventory().getSize(), title);
             } else {
-                inventory = Bukkit.createInventory(null, container.getInventory().getType(), container.getCustomName() == null ? container.getInventory().getType().getDefaultTitle() : container.getCustomName());
+                inventory = Bukkit.createInventory(null, type, title);
             }
 
             inventory.setContents(container.getInventory().getContents());
