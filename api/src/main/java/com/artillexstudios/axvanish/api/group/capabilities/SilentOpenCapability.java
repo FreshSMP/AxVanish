@@ -22,6 +22,7 @@ import java.util.UUID;
 
 public final class SilentOpenCapability extends VanishCapability implements Listener {
     private static final Map<UUID, Inventory> inventories = new HashMap<>();
+    private static final Map<UUID, Location> locations = new HashMap<>();
 
     public SilentOpenCapability(Map<String, Object> config) {
         super(config);
@@ -44,7 +45,9 @@ public final class SilentOpenCapability extends VanishCapability implements List
         Location location = clickedBlock.getLocation();
 
         Scheduler.get().runAt(location, task -> {
-            if (!(clickedBlock.getState() instanceof Container container)) {
+            Block block = location.getBlock();
+
+            if (!(block.getState() instanceof Container container)) {
                 return;
             }
 
@@ -61,6 +64,7 @@ public final class SilentOpenCapability extends VanishCapability implements List
 
             copy.setContents(original.getContents());
             inventories.put(player.getUniqueId(), original);
+            locations.put(player.getUniqueId(), location);
             player.openInventory(copy);
         });
     }
@@ -69,10 +73,11 @@ public final class SilentOpenCapability extends VanishCapability implements List
     public void onInventoryCloseEvent(InventoryCloseEvent event) {
         UUID playerId = event.getPlayer().getUniqueId();
         Inventory original = inventories.remove(playerId);
-        if (original == null) return;
+        Location location = locations.remove(playerId);
+        if (original == null || location == null) return;
 
-        Location location = event.getPlayer().getLocation();
-
-        Scheduler.get().runAt(location, task -> original.setContents(event.getView().getTopInventory().getContents()));
+        Scheduler.get().runAt(location, task ->
+                original.setContents(event.getView().getTopInventory().getContents())
+        );
     }
 }
