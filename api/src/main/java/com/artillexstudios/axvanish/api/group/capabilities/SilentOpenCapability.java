@@ -66,7 +66,9 @@ public final class SilentOpenCapability extends VanishCapability implements List
             copy.setContents(original.getContents());
             inventories.put(player.getUniqueId(), original);
             locations.put(player.getUniqueId(), location);
-            player.openInventory(copy);
+
+            Inventory finalCopy = copy;
+            Scheduler.get().runAt(player.getLocation(), scheduledTask -> player.openInventory(finalCopy));
         });
     }
 
