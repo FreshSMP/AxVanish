@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -76,8 +77,10 @@ public final class SilentOpenCapability extends VanishCapability implements List
         Location location = locations.remove(playerId);
         if (original == null || location == null) return;
 
+        ItemStack[] contents = event.getView().getTopInventory().getContents().clone();
+
         Scheduler.get().runAt(location, task ->
-                original.setContents(event.getView().getTopInventory().getContents())
+                original.setContents(contents)
         );
     }
 }
