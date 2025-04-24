@@ -1,7 +1,9 @@
 package com.artillexstudios.axvanish.listeners;
 
 import com.artillexstudios.axapi.utils.logging.FileLogger;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
+import com.artillexstudios.axvanish.api.LoadContext;
 import com.artillexstudios.axvanish.api.context.VanishContext;
 import com.artillexstudios.axvanish.api.context.source.DisconnectVanishSource;
 import com.artillexstudios.axvanish.api.context.source.ForceVanishSource;
@@ -12,6 +14,7 @@ import com.artillexstudios.axvanish.config.Language;
 import com.artillexstudios.axvanish.exception.UserAlreadyLoadedException;
 import com.artillexstudios.axvanish.users.Users;
 import com.artillexstudios.axvanish.utils.PermissionUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,6 +23,10 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public final class PlayerListener implements Listener {
     private final FileLogger logger = new FileLogger("join-logs");
@@ -30,7 +37,7 @@ public final class PlayerListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onAsyncPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event) {
+    public void onAsyncPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event) throws RuntimeException {
         if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
             if (Config.debug) {
                 this.logger.log("User %s asyncplayerpreloginevent was cancelled!".formatted(event.getName()));
@@ -43,7 +50,7 @@ public final class PlayerListener implements Listener {
         }
 
         try {
-            User user = Users.loadUser(event.getUniqueId()).join();
+            User user = Users.loadUser(event.getUniqueId()).get(5, TimeUnit.SECONDS);
             if (Config.debug) {
                 this.logger.log("User %s asyncplayerpreloginevent finished!".formatted(event.getName()));
             }
@@ -51,6 +58,10 @@ public final class PlayerListener implements Listener {
             if (Config.debug) {
                 this.logger.log("UserAlreadyLoadedException for user: %s. How did this happen?".formatted(event.getName()));
             }
+        } catch (ExecutionException | InterruptedException | TimeoutException exception) {
+            LogUtils.error("Failed to load userdata! It took too long, or something else happened!", exception);
+            User user = new com.artillexstudios.axvanish.users.User(Bukkit.getOfflinePlayer(event.getUniqueId()), null, null, false);
+            Users.loadWithContext(user, LoadContext.FULL);
         }
     }
 
