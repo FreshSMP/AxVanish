@@ -32,17 +32,17 @@ public final class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onAsyncPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event) throws UserAlreadyLoadedException {
         if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
-            this.logger.log("User %s asyncplayerpreloginevent was cancelled!".formatted(event.getName()));
+            this.logger.log("User %s AsyncPlayerPreLoginEvent was cancelled!".formatted(event.getName()));
             return;
         }
 
-        this.logger.log("User %s asyncplayerpreloginevent!".formatted(event.getName()));
+        this.logger.log("User %s AsyncPlayerPreLoginEvent!".formatted(event.getName()));
 
-        Users.loadUser(event.getUniqueId()).thenAcceptAsync(user -> this.logger.log("User %s asyncplayerpreloginevent finished!".formatted(event.getName()))).exceptionally(ex -> {
+        Users.loadUser(event.getUniqueId()).thenAcceptAsync(user -> this.logger.log("User %s AsyncPlayerPreLoginEvent finished!".formatted(event.getName()))).exceptionally(ex -> {
             if (ex.getCause() instanceof UserAlreadyLoadedException) {
                 this.logger.log("UserAlreadyLoadedException for user: %s. How did this happen?".formatted(event.getName()));
             } else {
-                ex.printStackTrace();
+                this.logger.log("Failed to load user %s during AsyncPlayerPreLoginEvent.".formatted(event.getName()));
             }
             return null;
         });
