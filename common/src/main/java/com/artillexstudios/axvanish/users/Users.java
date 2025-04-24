@@ -1,6 +1,6 @@
 package com.artillexstudios.axvanish.users;
 
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axvanish.api.LoadContext;
 import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.database.DataHandler;

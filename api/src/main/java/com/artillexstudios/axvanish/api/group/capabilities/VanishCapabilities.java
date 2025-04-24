@@ -1,7 +1,6 @@
 package com.artillexstudios.axvanish.api.group.capabilities;
 
-import com.artillexstudios.axapi.reflection.ClassUtils;
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -24,7 +23,13 @@ public final class VanishCapabilities {
     public static <T extends VanishCapability> Class<T> register(String key, Class<T> capability) {
         capabilities.put(key, capability);
         if (Listener.class.isAssignableFrom(capability)) {
-            Bukkit.getPluginManager().registerEvents(ClassUtils.INSTANCE.newInstance(capability), AxVanishAPI.instance().plugin());
+            Listener listener = create(key, new HashMap<>());
+            if (listener == null) {
+                LogUtils.warn("Failed to register a listener for capability with key {}!", key);
+                return capability;
+            }
+
+            Bukkit.getPluginManager().registerEvents(listener, AxVanishAPI.instance().plugin());
         }
 
         return capability;
@@ -43,7 +48,8 @@ public final class VanishCapabilities {
 
         try {
             return capability.getDeclaredConstructor(Map.class).newInstance(map);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }

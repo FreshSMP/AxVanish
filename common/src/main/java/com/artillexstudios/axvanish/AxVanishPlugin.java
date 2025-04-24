@@ -1,7 +1,9 @@
 package com.artillexstudios.axvanish;
 
 import com.artillexstudios.axapi.AxPlugin;
+import com.artillexstudios.axapi.dependencies.DependencyManagerWrapper;
 import com.artillexstudios.axapi.metrics.AxMetrics;
+import com.artillexstudios.axapi.utils.AsyncUtils;
 import com.artillexstudios.axapi.utils.featureflags.FeatureFlags;
 import com.artillexstudios.axvanish.command.AxVanishCommand;
 import com.artillexstudios.axvanish.config.Config;
@@ -12,9 +14,6 @@ import com.artillexstudios.axvanish.listeners.PlayerListener;
 import com.artillexstudios.axvanish.placeholders.PlaceholderRegistry;
 import com.artillexstudios.axvanish.utils.VanishStateManagerFactory;
 import org.bukkit.Bukkit;
-import revxrsal.zapper.Dependency;
-import revxrsal.zapper.DependencyManager;
-import revxrsal.zapper.relocation.Relocation;
 import revxrsal.zapper.repository.Repository;
 
 public final class AxVanishPlugin extends AxPlugin {
@@ -24,19 +23,19 @@ public final class AxVanishPlugin extends AxPlugin {
     private AxVanishCommand command;
 
     @Override
-    public void dependencies(DependencyManager manager) {
+    public void dependencies(DependencyManagerWrapper manager) {
         manager.repository(Repository.mavenCentral());
         manager.repository(Repository.jitpack());
-        manager.repository(Repository.maven("https://repo.codemc.org/repository/maven-public/"));
-        manager.repository(Repository.maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/"));
-        manager.dependency(new Dependency("dev.jorel", "commandapi-bukkit-shade", "9.7.0", null, true));
-        manager.dependency("com{}h2database:h2:2.3.232".replace("{}", "."));
-        manager.dependency("com{}zaxxer:HikariCP:5.1.0".replace("{}", "."));
-        manager.dependency("org{}jooq:jooq:3.19.10".replace("{}", "."));
-        manager.relocate(new Relocation("dev{}jorel{}commandapi".replace("{}", "."), "com.artillexstudios.axvanish.libs.commandapi"));
-        manager.relocate(new Relocation("com{}zaxxer".replace("{}", "."), "com.artillexstudios.axvanish.libs.hikaricp"));
-        manager.relocate(new Relocation("org{}jooq".replace("{}", "."), "com.artillexstudios.axvanish.libs.jooq"));
-        manager.relocate(new Relocation("org{}h2".replace("{}", "."), "com.artillexstudios.axvanish.libs.h2"));
+        manager.repository("https://repo.codemc.org/repository/maven-public/");
+        manager.repository("https://hub.spigotmc.org/nexus/content/repositories/snapshots/");
+        manager.dependency("dev{}jorel:commandapi-bukkit-shade:10.0.0", true);
+        manager.dependency("com{}h2database:h2:2.3.232");
+        manager.dependency("com{}zaxxer:HikariCP:5.1.0");
+        manager.dependency("org{}jooq:jooq:3.19.10");
+        manager.relocate("dev{}jorel{}commandapi", "com.artillexstudios.axvanish.libs.commandapi");
+        manager.relocate("com{}zaxxer", "com.artillexstudios.axvanish.libs.hikaricp");
+        manager.relocate("org{}jooq", "com.artillexstudios.axvanish.libs.jooq");
+        manager.relocate("org{}h2", "com.artillexstudios.axvanish.libs.h2");
     }
 
     @Override
@@ -54,6 +53,7 @@ public final class AxVanishPlugin extends AxPlugin {
         Config.reload();
         Language.reload();
         DataHandler.setup();
+        AsyncUtils.setup(Config.asyncUtilsThreadCount);
 
         this.metrics = new AxMetrics(this, 40);
         this.metrics.start();

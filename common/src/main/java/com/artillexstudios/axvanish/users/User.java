@@ -1,9 +1,9 @@
 package com.artillexstudios.axvanish.users;
 
-import com.artillexstudios.axapi.nms.NMSHandlers;
+import com.artillexstudios.axapi.nms.wrapper.WrapperRegistry;
 import com.artillexstudios.axapi.utils.Cooldown;
-import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axapi.utils.MessageUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axvanish.AxVanishPlugin;
 import com.artillexstudios.axvanish.api.context.VanishContext;
 import com.artillexstudios.axvanish.api.context.source.ForceVanishSource;
@@ -114,7 +114,7 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
             return;
         }
 
-        NMSHandlers.getNmsHandler().sendMessage(player, message);
+        WrapperRegistry.SERVER_PLAYER.map(player).message(message);
     }
 
     @Override

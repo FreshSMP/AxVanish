@@ -1,6 +1,6 @@
 package com.artillexstudios.axvanish.api.group.capabilities;
 
-import com.artillexstudios.axapi.nms.NMSHandlers;
+import com.artillexstudios.axapi.nms.wrapper.WrapperRegistry;
 import com.artillexstudios.axapi.reflection.ClassUtils;
 import com.artillexstudios.axapi.utils.StringUtils;
 import com.artillexstudios.axvanish.api.context.source.DisconnectVanishSource;
@@ -60,7 +60,7 @@ public final class MessageCapability extends VanishCapability implements Listene
 
         Component formatted = StringUtils.format(message);
         for (Player player : Bukkit.getOnlinePlayers()) {
-            NMSHandlers.getNmsHandler().sendMessage(player, formatted);
+            WrapperRegistry.SERVER_PLAYER.map(player).message(formatted);
         }
     }
 }

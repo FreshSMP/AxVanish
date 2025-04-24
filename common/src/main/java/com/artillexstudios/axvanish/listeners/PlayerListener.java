@@ -1,13 +1,13 @@
 package com.artillexstudios.axvanish.listeners;
 
-import com.artillexstudios.axapi.scheduler.Scheduler;
-import com.artillexstudios.axapi.utils.FileLogger;
+import com.artillexstudios.axapi.utils.logging.FileLogger;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.context.VanishContext;
 import com.artillexstudios.axvanish.api.context.source.DisconnectVanishSource;
 import com.artillexstudios.axvanish.api.context.source.ForceVanishSource;
 import com.artillexstudios.axvanish.api.context.source.JoinVanishSource;
 import com.artillexstudios.axvanish.api.users.User;
+import com.artillexstudios.axvanish.config.Config;
 import com.artillexstudios.axvanish.config.Language;
 import com.artillexstudios.axvanish.exception.UserAlreadyLoadedException;
 import com.artillexstudios.axvanish.users.Users;
@@ -30,28 +30,36 @@ public final class PlayerListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onAsyncPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event) throws UserAlreadyLoadedException {
+    public void onAsyncPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event) {
         if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
-            this.logger.log("User %s AsyncPlayerPreLoginEvent was cancelled!".formatted(event.getName()));
+            if (Config.debug) {
+                this.logger.log("User %s asyncplayerpreloginevent was cancelled!".formatted(event.getName()));
+            }
             return;
         }
 
-        this.logger.log("User %s AsyncPlayerPreLoginEvent!".formatted(event.getName()));
+        if (Config.debug) {
+            this.logger.log("User %s asyncplayerpreloginevent!".formatted(event.getName()));
+        }
 
-        Users.loadUser(event.getUniqueId()).thenAcceptAsync(user -> this.logger.log("User %s AsyncPlayerPreLoginEvent finished!".formatted(event.getName()))).exceptionally(ex -> {
-            if (ex.getCause() instanceof UserAlreadyLoadedException) {
-                this.logger.log("UserAlreadyLoadedException for user: %s. How did this happen?".formatted(event.getName()));
-            } else {
-                this.logger.log("Failed to load user %s during AsyncPlayerPreLoginEvent.".formatted(event.getName()));
+        try {
+            User user = Users.loadUser(event.getUniqueId()).join();
+            if (Config.debug) {
+                this.logger.log("User %s asyncplayerpreloginevent finished!".formatted(event.getName()));
             }
-            return null;
-        });
+        } catch (UserAlreadyLoadedException exception) {
+            if (Config.debug) {
+                this.logger.log("UserAlreadyLoadedException for user: %s. How did this happen?".formatted(event.getName()));
+            }
+        }
     }
 
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        this.logger.log("User join: %s.".formatted(event.getPlayer().getName()));
+        if (Config.debug) {
+            this.logger.log("User join: %s.".formatted(event.getPlayer().getName()));
+        }
         User user = AxVanishAPI.instance().userOrThrow(player);
         ((com.artillexstudios.axvanish.users.User) user).onlinePlayer(player);
         ((com.artillexstudios.axvanish.users.User) user).group(PermissionUtils.INSTANCE.group(player));
@@ -78,7 +86,9 @@ public final class PlayerListener implements Listener {
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         User user = Users.disconnect(player.getUniqueId());
-        this.logger.log("User disconnect: %s.".formatted(event.getPlayer().getName()));
+        if (Config.debug) {
+            this.logger.log("User disconnect: %s.".formatted(event.getPlayer().getName()));
+        }
 
         if (user == null) {
             return;

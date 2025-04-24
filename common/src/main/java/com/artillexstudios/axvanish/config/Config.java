@@ -5,8 +5,8 @@ import com.artillexstudios.axapi.config.annotation.Comment;
 import com.artillexstudios.axapi.config.annotation.ConfigurationPart;
 import com.artillexstudios.axapi.config.annotation.PostProcess;
 import com.artillexstudios.axapi.config.annotation.Serializable;
-import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axapi.utils.YamlUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axvanish.database.DatabaseType;
 import com.artillexstudios.axvanish.utils.FileUtils;
 
@@ -46,6 +46,11 @@ public final class Config implements ConfigurationPart {
         }
     }
 
+    @Comment("""
+            How many threads should we use for database queries?
+            Don't change it, if you don't know what it does!
+            """)
+    public static int asyncUtilsThreadCount = 1;
     @Comment("""
             The cooldown between sending the player the prohibited action message.
             This is in milliseconds.

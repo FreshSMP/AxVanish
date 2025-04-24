@@ -1,7 +1,7 @@
 package com.artillexstudios.axvanish.database;
 
 import com.artillexstudios.axapi.utils.AsyncUtils;
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axvanish.api.LoadContext;
 import com.artillexstudios.axvanish.config.Config;
 import com.artillexstudios.axvanish.users.User;
@@ -66,7 +66,7 @@ public final class DataHandler {
                     .fetch();
 
             if (!select.isEmpty()) {
-                Record record = select.get(0);
+                Record record = select.getFirst();
                 boolean vanished = record.get(DataHandler.vanished);
                 User user = new User(Bukkit.getOfflinePlayer(uuid), null, null, vanished);
                 Users.loadWithContext(user, context);
@@ -81,8 +81,13 @@ public final class DataHandler {
 
             User user = new User(Bukkit.getOfflinePlayer(uuid), null, null, false);
             Users.loadWithContext(user, context);
+            return (com.artillexstudios.axvanish.api.users.User) user;
+        }, AsyncUtils.executor()).exceptionallyAsync(throwable -> {
+            LogUtils.error("Failed to load user data for player {}! Falling back to default user!", uuid, throwable);
+            User user = new User(Bukkit.getOfflinePlayer(uuid), null, null, false);
+            Users.loadWithContext(user, context);
             return user;
-        });
+        }, AsyncUtils.executor());
     }
 
     public static void save(User user) {
@@ -92,6 +97,9 @@ public final class DataHandler {
                     .set(DataHandler.vanished, user.vanished())
                     .where(DataHandler.uuid.eq(user.player().getUniqueId()))
                     .execute();
-        });
+        }, AsyncUtils.executor()).exceptionallyAsync(throwable -> {
+            LogUtils.error("Failed to save user data for player {}!", user.player().getName(), throwable);
+            return null;
+        }, AsyncUtils.executor());
     }
 }

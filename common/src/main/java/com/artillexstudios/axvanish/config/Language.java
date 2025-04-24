@@ -6,8 +6,8 @@ import com.artillexstudios.axapi.config.annotation.ConfigurationPart;
 import com.artillexstudios.axapi.config.annotation.Ignored;
 import com.artillexstudios.axapi.config.annotation.Named;
 import com.artillexstudios.axapi.config.annotation.Serializable;
-import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axapi.utils.YamlUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axvanish.AxVanishPlugin;
 import com.artillexstudios.axvanish.utils.FileUtils;
 
@@ -35,7 +35,6 @@ public final class Language implements ConfigurationPart {
     @Serializable
     public static class Error {
         public String userNotLoaded = "<#FF0000>Your userdata has not loaded yet! Please try again in a moment!";
-        public String failedToLoadUserData = "<#FF0000>Failed to load your userdata";
         public String vanished = "<#FF0000>You can't do that while vanished!";
         public String notHighEnoughGroup = "<#FF0000>Your group's priority isn't high enough to change that user's vanish state-";
     }

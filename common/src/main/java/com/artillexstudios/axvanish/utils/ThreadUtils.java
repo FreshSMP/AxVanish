@@ -1,7 +1,7 @@
 package com.artillexstudios.axvanish.utils;
 
 import com.artillexstudios.axapi.scheduler.Scheduler;
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import org.bukkit.Location;
 
 public final class ThreadUtils {
