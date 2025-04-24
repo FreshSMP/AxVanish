@@ -1,5 +1,6 @@
 package com.artillexstudios.axvanish.listeners;
 
+import com.artillexstudios.axapi.scheduler.Scheduler;
 import com.artillexstudios.axapi.utils.FileLogger;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.context.VanishContext;
@@ -29,22 +30,22 @@ public final class PlayerListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onAsyncPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event) {
+    public void onAsyncPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event) throws UserAlreadyLoadedException {
         if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
-            this.logger.log("User %s asyncplayerpreloginevent was cancelled!".formatted(event.getName()));
+            this.logger.log("User %s AsyncPlayerPreLoginEvent was cancelled!".formatted(event.getName()));
             return;
         }
 
-        this.logger.log("User %s asyncplayerpreloginevent!".formatted(event.getName()));
+        this.logger.log("User %s AsyncPlayerPreLoginEvent!".formatted(event.getName()));
 
-        try {
-            User user = Users.loadUser(event.getUniqueId()).join();
-            this.logger.log("User %s asyncplayerpreloginevent finished!".formatted(event.getName()));
-        } catch (UserAlreadyLoadedException exception) {
-//            event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-//            event.setKickMessage(StringUtils.formatToString(Language.prefix + Language.error.failedToLoadUserData));
-            this.logger.log("UserAlreadyLoadedException for user: %s. How did this happen?".formatted(event.getName()));
-        }
+        Users.loadUser(event.getUniqueId()).thenAcceptAsync(user -> this.logger.log("User %s AsyncPlayerPreLoginEvent finished!".formatted(event.getName()))).exceptionally(ex -> {
+            if (ex.getCause() instanceof UserAlreadyLoadedException) {
+                this.logger.log("UserAlreadyLoadedException for user: %s. How did this happen?".formatted(event.getName()));
+            } else {
+                this.logger.log("Failed to load user %s during AsyncPlayerPreLoginEvent.".formatted(event.getName()));
+            }
+            return null;
+        });
     }
 
     @EventHandler
@@ -78,6 +79,10 @@ public final class PlayerListener implements Listener {
         Player player = event.getPlayer();
         User user = Users.disconnect(player.getUniqueId());
         this.logger.log("User disconnect: %s.".formatted(event.getPlayer().getName()));
+
+        if (user == null) {
+            return;
+        }
 
         user.update(user.vanished(), new VanishContext.Builder()
                 .withSource(DisconnectVanishSource.INSTANCE)
