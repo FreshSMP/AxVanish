@@ -5,6 +5,7 @@ import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axapi.scheduler.Scheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
@@ -39,6 +40,12 @@ public final class SilentOpenCapability extends VanishCapability implements List
 
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock == null) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (clickedBlock.getType() == Material.HOPPER) {
+            event.setCancelled(true);
             return;
         }
 
@@ -82,7 +89,7 @@ public final class SilentOpenCapability extends VanishCapability implements List
         ItemStack[] contents = event.getView().getTopInventory().getContents().clone();
 
         Scheduler.get().runAt(location, task ->
-                original.setContents(contents)
+            original.setContents(contents)
         );
     }
 }
