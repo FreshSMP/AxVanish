@@ -39,57 +39,46 @@ public final class SilentOpenCapability extends VanishCapability implements List
         }
 
         Block clickedBlock = event.getClickedBlock();
-        if (clickedBlock == null) {
+        if (clickedBlock == null || clickedBlock.getType() == Material.HOPPER) {
             event.setCancelled(true);
             return;
         }
 
-        if (clickedBlock.getType() == Material.HOPPER) {
+        if (!(clickedBlock.getState() instanceof Container container)) {
             event.setCancelled(true);
             return;
         }
+
+        Inventory original = container.getInventory();
+        InventoryType type = original.getType();
+        String title = container.getCustomName() == null ? type.getDefaultTitle() : container.getCustomName();
+
+        Inventory copy;
+        if (type == InventoryType.BARREL || type == InventoryType.CHEST || type == InventoryType.ENDER_CHEST) {
+            copy = Bukkit.createInventory(null, original.getSize(), title);
+        } else {
+            copy = Bukkit.createInventory(null, type, title);
+        }
+
+        copy.setContents(original.getContents());
+        inventories.put(player.getUniqueId(), original);
+        locations.put(player.getUniqueId(), clickedBlock.getLocation());
 
         event.setCancelled(true);
-        Location location = clickedBlock.getLocation();
 
-        Scheduler.get().runAt(location, task -> {
-            Block block = location.getBlock();
-
-            if (!(block.getState() instanceof Container container)) {
-                return;
-            }
-
-            Inventory original = container.getInventory();
-            InventoryType type = original.getType();
-            String title = container.getCustomName() == null ? type.getDefaultTitle() : container.getCustomName();
-
-            Inventory copy;
-            if (type == InventoryType.BARREL || type == InventoryType.CHEST || type == InventoryType.ENDER_CHEST) {
-                copy = Bukkit.createInventory(null, original.getSize(), title);
-            } else {
-                copy = Bukkit.createInventory(null, type, title);
-            }
-
-            copy.setContents(original.getContents());
-            inventories.put(player.getUniqueId(), original);
-            locations.put(player.getUniqueId(), location);
-
-            Inventory finalCopy = copy;
-            Scheduler.get().runAt(player.getLocation(), scheduledTask -> player.openInventory(finalCopy));
-        });
+        Scheduler.get().runAt(player.getLocation(), task -> player.openInventory(copy));
     }
 
     @EventHandler
     public void onInventoryCloseEvent(InventoryCloseEvent event) {
-        UUID playerId = event.getPlayer().getUniqueId();
+        Player player = (Player) event.getPlayer();
+        UUID playerId = player.getUniqueId();
         Inventory original = inventories.remove(playerId);
         Location location = locations.remove(playerId);
         if (original == null || location == null) return;
 
         ItemStack[] contents = event.getView().getTopInventory().getContents().clone();
 
-        Scheduler.get().runAt(location, task ->
-            original.setContents(contents)
-        );
+        Scheduler.get().runAt(location, task -> original.setContents(contents));
     }
 }
