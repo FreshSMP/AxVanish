@@ -44,29 +44,29 @@ public final class SilentOpenCapability extends VanishCapability implements List
             return;
         }
 
-        if (!(clickedBlock.getState() instanceof Container container)) {
-            event.setCancelled(true);
-            return;
-        }
+        Scheduler.get().runAt(clickedBlock.getLocation(), task -> {
+            if (!(clickedBlock.getState() instanceof Container container)) {
+                event.setCancelled(true);
+                return;
+            }
 
-        Inventory original = container.getInventory();
-        InventoryType type = original.getType();
-        String title = container.getCustomName() == null ? type.getDefaultTitle() : container.getCustomName();
+            Inventory original = container.getInventory();
+            InventoryType type = original.getType();
+            String title = container.getCustomName() == null ? type.getDefaultTitle() : container.getCustomName();
 
-        Inventory copy;
-        if (type == InventoryType.BARREL || type == InventoryType.CHEST || type == InventoryType.ENDER_CHEST) {
-            copy = Bukkit.createInventory(null, original.getSize(), title);
-        } else {
-            copy = Bukkit.createInventory(null, type, title);
-        }
+            Inventory copy;
+            if (type == InventoryType.BARREL || type == InventoryType.CHEST || type == InventoryType.ENDER_CHEST) {
+                copy = Bukkit.createInventory(null, original.getSize(), title);
+            } else {
+                copy = Bukkit.createInventory(null, type, title);
+            }
 
-        copy.setContents(original.getContents());
-        inventories.put(player.getUniqueId(), original);
-        locations.put(player.getUniqueId(), clickedBlock.getLocation());
+            copy.setContents(original.getContents());
+            inventories.put(player.getUniqueId(), original);
+            locations.put(player.getUniqueId(), clickedBlock.getLocation());
 
-        event.setCancelled(true);
-
-        Scheduler.get().runAt(player.getLocation(), task -> player.openInventory(copy));
+            Scheduler.get().runAt(player.getLocation(), task2 -> player.openInventory(copy));
+        });
     }
 
     @EventHandler
