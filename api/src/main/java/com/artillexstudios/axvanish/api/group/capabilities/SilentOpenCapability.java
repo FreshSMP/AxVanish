@@ -71,8 +71,7 @@ public final class SilentOpenCapability extends VanishCapability implements List
 
     @EventHandler
     public void onInventoryCloseEvent(InventoryCloseEvent event) {
-        Player player = (Player) event.getPlayer();
-        UUID playerId = player.getUniqueId();
+        UUID playerId = event.getPlayer().getUniqueId();
         Inventory original = inventories.remove(playerId);
         Location location = locations.remove(playerId);
         if (original == null || location == null) return;
