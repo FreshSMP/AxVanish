@@ -13,16 +13,16 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class SilentOpenCapability extends VanishCapability implements Listener {
-    private static final Map<UUID, Inventory> inventories = new ConcurrentHashMap<>();
+    private static final Map<UUID, Container> trackedInventories = new ConcurrentHashMap<>();
 
     public SilentOpenCapability(Map<String, Object> config) {
         super(config);
@@ -41,37 +41,46 @@ public final class SilentOpenCapability extends VanishCapability implements List
         }
 
         Block block = event.getClickedBlock();
-        if (block == null || block.getType() == Material.HOPPER) {
+        if (block == null
+                || block.getType() == Material.BLAST_FURNACE
+                || block.getType() == Material.BREWING_STAND
+                || block.getType() == Material.FURNACE
+                || block.getType() == Material.HOPPER
+                || block.getType() == Material.SMOKER) {
             return;
         }
 
+        event.setCancelled(true);
         Scheduler.get().runAt(block.getLocation(), () -> {
             if (!(block.getState() instanceof Container container)) {
                 return;
             }
 
-            event.setCancelled(true);
-            if (container.getInventory().getType() == InventoryType.BARREL || container.getInventory().getType() == InventoryType.CHEST || container.getInventory().getType() == InventoryType.ENDER_CHEST) {
-                Inventory inventory = Bukkit.createInventory(null, container.getInventory().getSize(), container.getCustomName() == null ? container.getInventory().getType().getDefaultTitle() : container.getCustomName());
-                inventory.setContents(container.getInventory().getContents());
-                inventories.put(event.getPlayer().getUniqueId(), container.getInventory());
-                event.getPlayer().openInventory(inventory);
-            } else {
-                Inventory inventory = Bukkit.createInventory(null, container.getInventory().getType(), container.getCustomName() == null ? container.getInventory().getType().getDefaultTitle() : container.getCustomName());
-                inventory.setContents(container.getInventory().getContents());
-                inventories.put(event.getPlayer().getUniqueId(), container.getInventory());
-                event.getPlayer().openInventory(inventory);
-            }
+            Inventory original = container.getInventory();
+            String title = container.getCustomName() != null ? container.getCustomName() : original.getType().getDefaultTitle();
+
+            Inventory fakeInventory = Bukkit.createInventory(null, original.getSize(), title);
+            fakeInventory.setContents(original.getContents());
+
+            trackedInventories.put(player.getUniqueId(), container);
+            player.openInventory(fakeInventory);
         });
     }
 
     @EventHandler
     public void onInventoryCloseEvent(InventoryCloseEvent event) {
-        Inventory other = inventories.remove(event.getPlayer().getUniqueId());
-        if (other == null) {
+        UUID uuid = event.getPlayer().getUniqueId();
+        Container container = trackedInventories.remove(uuid);
+        if (container == null) {
             return;
         }
 
-        other.setContents(event.getView().getTopInventory().getContents());
+        Inventory source = container.getInventory();
+        Inventory view = event.getView().getTopInventory();
+        ItemStack[] newContents = view.getContents();
+
+        for (int i = 0; i < source.getSize(); i++) {
+            source.setItem(i, i < newContents.length ? newContents[i] : null);
+        }
     }
 }
