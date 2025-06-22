@@ -1,6 +1,20 @@
 group = rootProject.group
 version = rootProject.version
 
+dependencies {
+    implementation("com.artillexstudios.axapi:axapi:1.4.677:all")
+}
+
+tasks {
+    publish {
+        dependsOn(shadowJar)
+    }
+
+    shadowJar {
+        relocate("com.artillexstudios.axapi", "com.artillexstudios.axvanish.libs.axapi")
+    }
+}
+
 publishing {
     repositories {
         maven {
