@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("maven-publish")
     id("com.gradleup.shadow") version("8.3.6")
 }
 
@@ -26,6 +27,7 @@ dependencies {
 subprojects {
     apply {
         plugin("java")
+        plugin("maven-publish")
         plugin("com.gradleup.shadow")
     }
 
