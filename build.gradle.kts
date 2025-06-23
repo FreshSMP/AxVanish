@@ -32,18 +32,18 @@ subprojects {
     }
 
     dependencies {
-        implementation("com.artillexstudios.axapi:axapi:1.4.677:all")
-        compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.0")
+        implementation("com.artillexstudios.axapi:axapi:1.4.710:all")
+        compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.1")
         compileOnly("org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT")
-        compileOnly("dev.jorel:commandapi-bukkit-shade:10.0.1")
+        compileOnly("dev.jorel:commandapi-bukkit-shade:10.1.0")
         compileOnly("org.apache.commons:commons-lang3:3.17.0")
         compileOnly("commons-io:commons-io:2.19.0")
-        compileOnly("it.unimi.dsi:fastutil:8.5.15")
+        compileOnly("it.unimi.dsi:fastutil:8.5.16")
         compileOnly("me.clip:placeholderapi:2.11.6")
         compileOnly("com.h2database:h2:2.3.232")
         compileOnly("com.zaxxer:HikariCP:6.3.0")
         compileOnly("org.slf4j:slf4j-api:2.0.17")
-        compileOnly("org.jooq:jooq:3.20.4")
+        compileOnly("org.jooq:jooq:3.20.5")
     }
 }
 
