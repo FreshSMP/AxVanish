@@ -39,9 +39,9 @@ public final class AxVanishPlugin extends AxPlugin {
     }
 
     @Override
-    public void updateFlags(FeatureFlags flags) {
-        flags.PLACEHOLDER_API_HOOK.set(true);
-        flags.PLACEHOLDER_API_IDENTIFIER.set("axvanish");
+    public void updateFlags() {
+        FeatureFlags.PLACEHOLDER_API_HOOK.set(true);
+        FeatureFlags.PLACEHOLDER_API_IDENTIFIER.set("axvanish");
     }
 
     @Override

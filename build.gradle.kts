@@ -44,6 +44,7 @@ subprojects {
         compileOnly("com.zaxxer:HikariCP:6.3.0")
         compileOnly("org.slf4j:slf4j-api:2.0.17")
         compileOnly("org.jooq:jooq:3.20.5")
+        compileOnly("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
     }
 }
 
