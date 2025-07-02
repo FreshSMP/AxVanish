@@ -19,6 +19,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.event.server.TabCompleteEvent;
 
 import java.util.ArrayList;
@@ -296,6 +297,23 @@ public final class PreventCapability extends VanishCapability implements Listene
 
         for (String vanishedPlayer : vanishedPlayers) {
             event.setMessage(event.getMessage().replace(vanishedPlayer, RandomStringGenerator.lowercase().generate(5)));
+        }
+    }
+
+    @EventHandler
+    public void onPlayerPickupArrowEvent(PlayerPickupArrowEvent event) {
+        User user = AxVanishAPI.instance().getUserIfLoadedImmediately(event.getPlayer());
+        if (user == null) {
+            return;
+        }
+
+        PreventCapability capability = user.capability(VanishCapabilities.PREVENT);
+        if (capability == null) {
+            return;
+        }
+
+        if (capability.prevents("arrow-pickup")) {
+            event.setCancelled(true);
         }
     }
 }
