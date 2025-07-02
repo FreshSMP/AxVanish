@@ -312,7 +312,7 @@ public final class PreventCapability extends VanishCapability implements Listene
             return;
         }
 
-        if (capability.prevents("arrow-pickup")) {
+        if (capability.prevents("arrow_pickup")) {
             event.setCancelled(true);
         }
     }
