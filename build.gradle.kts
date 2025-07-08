@@ -1,7 +1,7 @@
 plugins {
     id("java")
     id("maven-publish")
-    id("com.gradleup.shadow") version("8.3.6")
+    id("com.gradleup.shadow") version("8.3.8")
 }
 
 group = "com.artillexstudios.axvanish"
@@ -32,7 +32,7 @@ subprojects {
     }
 
     dependencies {
-        implementation("com.artillexstudios.axapi:axapi:1.4.720:all")
+        implementation("com.artillexstudios.axapi:axapi:1.4.732:all")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.1")
         compileOnly("org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT")
         compileOnly("dev.jorel:commandapi-bukkit-shade:10.1.1")
