@@ -22,7 +22,51 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class SilentOpenCapability extends VanishCapability implements Listener {
-    private static final Map<UUID, Container> trackedInventories = new ConcurrentHashMap<>();
+
+    private static final class TrackedInventory {
+        private final Container container;
+        private final ItemStack[] originalContents;
+
+        public TrackedInventory(Container container) {
+            this.container = container;
+            this.originalContents = container.getInventory().getContents();
+        }
+
+        public boolean isUnmodified() {
+            ItemStack[] current = container.getInventory().getContents();
+            if (current.length != originalContents.length) {
+                return false;
+            }
+
+            for (int i = 0; i < current.length; i++) {
+                if (!ItemStackComparator.equals(current[i], originalContents[i])) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public Container getContainer() {
+            return container;
+        }
+    }
+
+    private static final class ItemStackComparator {
+        public static boolean equals(ItemStack a, ItemStack b) {
+            if (a == null && b == null) {
+                return true;
+            }
+
+            if (a == null || b == null) {
+                return false;
+            }
+
+            return a.isSimilar(b) && a.getAmount() == b.getAmount();
+        }
+    }
+
+    private static final Map<UUID, TrackedInventory> trackedInventories = new ConcurrentHashMap<>();
 
     public SilentOpenCapability(Map<String, Object> config) {
         super(config);
@@ -60,9 +104,14 @@ public final class SilentOpenCapability extends VanishCapability implements List
             String title = container.getCustomName() != null ? container.getCustomName() : original.getType().getDefaultTitle();
 
             Inventory fakeInventory = Bukkit.createInventory(null, original.getSize(), title);
-            fakeInventory.setContents(original.getContents());
+            ItemStack[] contents = original.getContents();
+            ItemStack[] copy = new ItemStack[contents.length];
+            for (int i = 0; i < contents.length; i++) {
+                copy[i] = contents[i] == null ? null : contents[i].clone();
+            }
+            fakeInventory.setContents(copy);
 
-            trackedInventories.put(player.getUniqueId(), container);
+            trackedInventories.put(player.getUniqueId(), new TrackedInventory(container));
             player.openInventory(fakeInventory);
         });
     }
@@ -70,12 +119,16 @@ public final class SilentOpenCapability extends VanishCapability implements List
     @EventHandler
     public void onInventoryCloseEvent(InventoryCloseEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
-        Container container = trackedInventories.remove(uuid);
-        if (container == null) {
+        TrackedInventory tracked = trackedInventories.remove(uuid);
+        if (tracked == null) {
             return;
         }
 
-        Inventory source = container.getInventory();
+        if (!tracked.isUnmodified()) {
+            return;
+        }
+
+        Inventory source = tracked.getContainer().getInventory();
         Inventory view = event.getView().getTopInventory();
         ItemStack[] newContents = view.getContents();
 
