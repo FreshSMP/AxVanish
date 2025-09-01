@@ -17,9 +17,44 @@ import com.artillexstudios.axvanish.utils.VanishStateManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import java.util.Iterator;
 
 public final class User implements com.artillexstudios.axvanish.api.users.User {
-    private static final Cooldown<User> cancelCooldown = new Cooldown<>();
+
+    private static final Cooldown<User> cancelCooldown = new Cooldown<>() {
+        @NotNull
+        @Override
+        public Iterator<User> iterator() {
+            return null;
+        }
+
+        @Override
+        public void addCooldown(User key, long time) {
+
+        }
+
+        @Override
+        public long getRemaining(User key) {
+            return 0;
+        }
+
+        @Override
+        public int size() {
+            return 0;
+        }
+
+        @Override
+        public void remove(User key) {
+
+        }
+
+        @Override
+        public void clear() {
+
+        }
+    };
+
     private final OfflinePlayer offlinePlayer;
     private Group group;
     private Player onlinePlayer;
