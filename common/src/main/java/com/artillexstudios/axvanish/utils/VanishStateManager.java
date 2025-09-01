@@ -63,6 +63,8 @@ public final class VanishStateManager {
                 continue;
             }
 
+            Runnable retired = () -> this.count(playerCounter, counter);
+
             // We want to be sure that only people who can see the player
             // can see the player. This is not a mistake
             if (Config.debug) {
@@ -72,12 +74,12 @@ public final class VanishStateManager {
                 Scheduler.get().run(onlinePlayer, task -> {
                     onlinePlayer.showPlayer(this.plugin, player);
                     this.count(playerCounter, counter);
-                });
+                }, retired);
             } else {
                 Scheduler.get().run(onlinePlayer, task -> {
                     onlinePlayer.hidePlayer(this.plugin, player);
                     this.count(playerCounter, counter);
-                });
+                }, retired);
             }
 
             if (Config.debug) {
@@ -87,12 +89,12 @@ public final class VanishStateManager {
                 Scheduler.get().run(onlinePlayer, task -> {
                     player.showPlayer(this.plugin, onlinePlayer);
                     this.count(playerCounter, counter);
-                });
+                }, retired);
             } else {
                 Scheduler.get().run(onlinePlayer, task -> {
                     player.hideEntity(this.plugin, onlinePlayer);
                     this.count(playerCounter, counter);
-                });
+                }, retired);
             }
         }
     }
