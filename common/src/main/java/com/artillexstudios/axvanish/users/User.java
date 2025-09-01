@@ -31,7 +31,6 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
 
         @Override
         public void addCooldown(User key, long time) {
-
         }
 
         @Override
@@ -46,12 +45,10 @@ public final class User implements com.artillexstudios.axvanish.api.users.User {
 
         @Override
         public void remove(User key) {
-
         }
 
         @Override
         public void clear() {
-
         }
     };
 
