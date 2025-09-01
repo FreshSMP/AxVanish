@@ -69,12 +69,12 @@ public final class VanishStateManager {
                 LogUtils.debug("Can {} see {}: {}", onlinePlayer.getName(), player.getName(), online.canSee(this.user));
             }
             if (online.canSee(this.user)) {
-                Scheduler.get().runAt(onlinePlayer, task -> {
+                Scheduler.get().run(onlinePlayer, task -> {
                     onlinePlayer.showPlayer(this.plugin, player);
                     this.count(playerCounter, counter);
                 });
             } else {
-                Scheduler.get().runAt(onlinePlayer, task -> {
+                Scheduler.get().run(onlinePlayer, task -> {
                     onlinePlayer.hidePlayer(this.plugin, player);
                     this.count(playerCounter, counter);
                 });
@@ -84,12 +84,12 @@ public final class VanishStateManager {
                 LogUtils.debug("Can {} see {}: {}", player.getName(), onlinePlayer.getName(), this.user.canSee(online));
             }
             if (this.user.canSee(online)) {
-                Scheduler.get().runAt(onlinePlayer, task -> {
+                Scheduler.get().run(onlinePlayer, task -> {
                     player.showPlayer(this.plugin, onlinePlayer);
                     this.count(playerCounter, counter);
                 });
             } else {
-                Scheduler.get().runAt(onlinePlayer, task -> {
+                Scheduler.get().run(onlinePlayer, task -> {
                     player.hideEntity(this.plugin, onlinePlayer);
                     this.count(playerCounter, counter);
                 });
