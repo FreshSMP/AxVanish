@@ -44,7 +44,7 @@ public final class Groups {
 
         this.config.load();
         Map<String, Group> groups = new HashMap<>();
-        Map<String, Map<String, Object>> section = (Map<String, Map<String, Object>>) this.config.getMap("groups");
+        Map<String, Map<String, Object>> section = this.config.getMap("groups");
         if (section == null) {
             return false;
         }

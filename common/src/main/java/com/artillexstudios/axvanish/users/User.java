@@ -19,7 +19,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public final class User implements com.artillexstudios.axvanish.api.users.User {
-    private static final Cooldown<User> cancelCooldown = new Cooldown<>();
+
+    private static final Cooldown<User> cancelCooldown = Cooldown.create();
+
     private final OfflinePlayer offlinePlayer;
     private Group group;
     private Player onlinePlayer;

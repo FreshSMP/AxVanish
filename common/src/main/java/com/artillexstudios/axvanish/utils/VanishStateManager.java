@@ -63,36 +63,38 @@ public final class VanishStateManager {
                 continue;
             }
 
+            Runnable retired = () -> this.count(playerCounter, counter);
+
             // We want to be sure that only people who can see the player
             // can see the player. This is not a mistake
             if (Config.debug) {
                 LogUtils.debug("Can {} see {}: {}", onlinePlayer.getName(), player.getName(), online.canSee(this.user));
             }
             if (online.canSee(this.user)) {
-                Scheduler.get().runAt(onlinePlayer.getLocation(), task -> {
+                Scheduler.get().run(onlinePlayer, task -> {
                     onlinePlayer.showPlayer(this.plugin, player);
                     this.count(playerCounter, counter);
-                });
+                }, retired);
             } else {
-                Scheduler.get().runAt(onlinePlayer.getLocation(), task -> {
+                Scheduler.get().run(onlinePlayer, task -> {
                     onlinePlayer.hidePlayer(this.plugin, player);
                     this.count(playerCounter, counter);
-                });
+                }, retired);
             }
 
             if (Config.debug) {
                 LogUtils.debug("Can {} see {}: {}", player.getName(), onlinePlayer.getName(), this.user.canSee(online));
             }
             if (this.user.canSee(online)) {
-                Scheduler.get().runAt(onlinePlayer.getLocation(), task -> {
+                Scheduler.get().run(onlinePlayer, task -> {
                     player.showPlayer(this.plugin, onlinePlayer);
                     this.count(playerCounter, counter);
-                });
+                }, retired);
             } else {
-                Scheduler.get().runAt(onlinePlayer.getLocation(), task -> {
+                Scheduler.get().run(onlinePlayer, task -> {
                     player.hideEntity(this.plugin, onlinePlayer);
                     this.count(playerCounter, counter);
-                });
+                }, retired);
             }
         }
     }
