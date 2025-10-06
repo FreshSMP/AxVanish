@@ -38,7 +38,7 @@ subprojects {
         compileOnly("dev.jorel:commandapi-spigot-shade:11.0.0")
         compileOnly("org.apache.commons:commons-lang3:3.19.0")
         compileOnly("commons-io:commons-io:2.20.0")
-        compileOnly("it.unimi.dsi:fastutil:8.5.17")
+        compileOnly("it.unimi.dsi:fastutil:8.5.18")
         compileOnly("me.clip:placeholderapi:2.11.6")
         compileOnly("com.h2database:h2:2.4.240")
         compileOnly("com.zaxxer:HikariCP:7.0.2")
