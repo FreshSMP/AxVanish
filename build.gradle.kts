@@ -32,10 +32,11 @@ subprojects {
     }
 
     dependencies {
-        implementation("com.artillexstudios.axapi:axapi:1.4.747:all")
+        implementation("com.artillexstudios.axapi:axapi:1.4.802:all")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.2")
         compileOnly("org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT")
         compileOnly("dev.jorel:commandapi-spigot-shade:11.0.0")
+        compileOnly("net.kyori:adventure-platform-bukkit:4.4.1")
         compileOnly("org.apache.commons:commons-lang3:3.19.0")
         compileOnly("commons-io:commons-io:2.20.0")
         compileOnly("it.unimi.dsi:fastutil:8.5.18")

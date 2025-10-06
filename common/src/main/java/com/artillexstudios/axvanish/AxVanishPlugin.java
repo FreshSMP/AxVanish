@@ -42,6 +42,7 @@ public final class AxVanishPlugin extends AxPlugin {
     public void updateFlags() {
         FeatureFlags.PLACEHOLDER_API_HOOK.set(true);
         FeatureFlags.PLACEHOLDER_API_IDENTIFIER.set("axvanish");
+        FeatureFlags.ASYNC_UTILS_POOL_SIZE.set(Config.asyncUtilsThreadCount);
     }
 
     @Override
@@ -53,7 +54,6 @@ public final class AxVanishPlugin extends AxPlugin {
         Config.reload();
         Language.reload();
         DataHandler.setup();
-        AsyncUtils.setup(Config.asyncUtilsThreadCount);
 
         this.metrics = new AxMetrics(this, 40);
         this.metrics.start();
@@ -74,6 +74,7 @@ public final class AxVanishPlugin extends AxPlugin {
     public void disable() {
         this.metrics.cancel();
         this.command.disable();
+        AsyncUtils.stop();
     }
 
     public VanishStateManagerFactory stateManagerFactory() {
