@@ -43,6 +43,7 @@ public final class AxVanishPlugin extends AxPlugin {
         FeatureFlags.PLACEHOLDER_API_HOOK.set(true);
         FeatureFlags.PLACEHOLDER_API_IDENTIFIER.set("axvanish");
         FeatureFlags.ASYNC_UTILS_POOL_SIZE.set(Config.asyncUtilsThreadCount);
+        FeatureFlags.ENABLE_PACKET_LISTENERS.set(false);
     }
 
     @Override
