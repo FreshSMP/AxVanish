@@ -14,6 +14,7 @@ allprojects {
         maven("https://jitpack.io/")
         maven("https://repo.artillex-studios.com/releases/")
         maven("https://repo.codemc.org/repository/maven-public/")
+        maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     }
@@ -34,8 +35,8 @@ subprojects {
     dependencies {
         implementation("com.artillexstudios.axapi:axapi:1.4.802:all")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.2")
-        compileOnly("org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT")
-        compileOnly("dev.jorel:commandapi-spigot-shade:11.0.0")
+        compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+        compileOnly("dev.jorel:commandapi-paper-shade:11.0.0")
         compileOnly("net.kyori:adventure-platform-bukkit:4.4.1")
         compileOnly("org.apache.commons:commons-lang3:3.19.0")
         compileOnly("commons-io:commons-io:2.20.0")

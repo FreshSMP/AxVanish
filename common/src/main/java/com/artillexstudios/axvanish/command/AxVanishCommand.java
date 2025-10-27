@@ -14,8 +14,9 @@ import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.config.Config;
 import com.artillexstudios.axvanish.config.Groups;
 import com.artillexstudios.axvanish.config.Language;
+import com.destroystokyo.paper.profile.PlayerProfile;
 import dev.jorel.commandapi.CommandAPI;
-import dev.jorel.commandapi.CommandAPISpigotConfig;
+import dev.jorel.commandapi.CommandAPIPaperConfig;
 import dev.jorel.commandapi.CommandTree;
 import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.arguments.PlayerProfileArgument;
@@ -35,8 +36,7 @@ public final class AxVanishCommand {
     }
 
     public void load() {
-        CommandAPI.onLoad(new CommandAPISpigotConfig(this.plugin)
-                .skipReloadDatapacks(true)
+        CommandAPI.onLoad(new CommandAPIPaperConfig(this.plugin)
                 .setNamespace("axvanish")
         );
     }
@@ -93,13 +93,13 @@ public final class AxVanishCommand {
                         .then(new PlayerProfileArgument("player")
                                 .withPermission("axvanish.command.toggle.other")
                                 .executes((sender, args) -> {
-                                    OfflinePlayer offlinePlayer = args.getByClass("player", OfflinePlayer.class);
+                                    PlayerProfile offlinePlayer = args.getByClass("player", PlayerProfile.class);
                                     if (offlinePlayer == null) {
                                         return;
                                     }
 
                                     VanishSource source = sender instanceof Player player ? AxVanishAPI.instance().getUserIfLoadedImmediately(player) : ConsoleVanishSource.INSTANCE;
-                                    AxVanishAPI.instance().user(offlinePlayer.getUniqueId()).thenAccept(user -> {
+                                    AxVanishAPI.instance().user(offlinePlayer.getId()).thenAccept(user -> {
                                         if (source instanceof User senderUser) {
                                             if (senderUser.group() != null && user.group() != null && senderUser.group().priority() < user.group().priority()) {
                                                 MessageUtils.sendMessage(sender, Language.prefix, Language.error.notHighEnoughGroup);

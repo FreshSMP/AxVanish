@@ -28,7 +28,7 @@ public final class AxVanishPlugin extends AxPlugin {
         manager.repository(Repository.jitpack());
         manager.repository("https://repo.codemc.org/repository/maven-public/");
         manager.repository("https://hub.spigotmc.org/nexus/content/repositories/snapshots/");
-        manager.dependency("dev{}jorel:commandapi-spigot-shade:11.0.0", true);
+        manager.dependency("dev{}jorel:commandapi-paper-shade:11.0.0");
         manager.dependency("com{}h2database:h2:2.4.240");
         manager.dependency("com{}zaxxer:HikariCP:7.0.2");
         manager.dependency("org{}jooq:jooq:3.20.8");
