@@ -63,9 +63,9 @@ public final class AxVanishPlugin extends AxPlugin {
     @Override
     public void enable() {
         this.stateManagerFactory = new VanishStateManagerFactory(this);
+        this.command.enable();
         this.command.register();
         Groups.reload();
-        this.command.enable();
 
         Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
         PlaceholderRegistry.INSTANCE.register();
