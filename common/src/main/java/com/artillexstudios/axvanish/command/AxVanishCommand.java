@@ -22,7 +22,6 @@ import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.arguments.PlayerProfileArgument;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -93,7 +92,10 @@ public final class AxVanishCommand {
                         .then(new PlayerProfileArgument("player")
                                 .withPermission("axvanish.command.toggle.other")
                                 .executes((sender, args) -> {
-                                    PlayerProfile offlinePlayer = args.getByClass("player", PlayerProfile.class);
+                                    Object raw = args.get("player");
+                                    PlayerProfile offlinePlayer = (raw instanceof PlayerProfile pp) ? pp :
+                                            (raw instanceof List<?> list && !list.isEmpty() && list.getFirst()
+                                                    instanceof PlayerProfile) ? (PlayerProfile) list.getFirst() : null;
                                     if (offlinePlayer == null) {
                                         return;
                                     }
@@ -119,18 +121,19 @@ public final class AxVanishCommand {
                                             return;
                                         }
 
+                                        String targetName = user.player() != null ? user.player().getName() : (offlinePlayer.getName() != null ? offlinePlayer.getName() : "Unknown");
                                         if (previous) {
                                             MessageUtils.sendMessage(sender, Language.prefix, Language.unVanish.unVanish);
                                             AxVanishAPI.instance().online()
                                                     .stream()
                                                     .filter(other -> other.canSee(user) && other != user)
-                                                    .forEach(other -> MessageUtils.sendMessage(other.onlinePlayer(), Language.prefix, Language.unVanish.broadcast, Placeholder.unparsed("player", user.player().getName())));
+                                                    .forEach(other -> MessageUtils.sendMessage(other.onlinePlayer(), Language.prefix, Language.unVanish.broadcast, Placeholder.unparsed("player", targetName)));
                                         } else {
                                             MessageUtils.sendMessage(sender, Language.prefix, Language.vanish.vanish);
                                             AxVanishAPI.instance().online()
                                                     .stream()
                                                     .filter(other -> other.canSee(user) && other != user)
-                                                    .forEach(other -> MessageUtils.sendMessage(other.onlinePlayer(), Language.prefix, Language.vanish.broadcast, Placeholder.unparsed("player", user.player().getName())));
+                                                    .forEach(other -> MessageUtils.sendMessage(other.onlinePlayer(), Language.prefix, Language.vanish.broadcast, Placeholder.unparsed("player", targetName)));
                                         }
                                     });
                                 })
