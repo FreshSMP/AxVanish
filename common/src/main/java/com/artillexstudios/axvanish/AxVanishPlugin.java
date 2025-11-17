@@ -30,7 +30,6 @@ public final class AxVanishPlugin extends AxPlugin {
         manager.repository("https://repo.codemc.org/repository/maven-public/");
         manager.repository("https://hub.spigotmc.org/nexus/content/repositories/snapshots/");
         manager.dependency("org{}incendo:cloud-paper:2.0.0-beta.13");
-        manager.dependency("org{}incendo:cloud-minecraft-extras:2.0.0-beta.13");
         manager.dependency("com{}h2database:h2:2.4.240");
         manager.dependency("com{}zaxxer:HikariCP:7.0.2");
         manager.dependency("org{}jooq:jooq:3.20.8");

@@ -37,7 +37,6 @@ subprojects {
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.2")
         compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
         compileOnly("org.incendo:cloud-paper:2.0.0-beta.13")
-        compileOnly("org.incendo:cloud-minecraft-extras:2.0.0-beta.13")
         compileOnly("net.kyori:adventure-platform-bukkit:4.4.1")
         compileOnly("org.apache.commons:commons-lang3:3.19.0")
         compileOnly("commons-io:commons-io:2.20.0")
