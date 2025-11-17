@@ -107,11 +107,7 @@ public final class Language implements ConfigurationPart {
 
             this.config = YamlConfiguration.of(path, Language.class)
                     .configVersion(1, "config-version")
-                    .withDefaults(defaults)
-/*                    .withDumperOptions(options -> {
-                        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-                        options.setSplitLines(false);
-                    })*/.build();
+                    .withDefaults(defaults).build();
         }
 
         this.config.load();

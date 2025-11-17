@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public final class PlayerListener implements Listener {
+
     private final FileLogger logger = new FileLogger("join-logs");
     private final JavaPlugin plugin;
 
