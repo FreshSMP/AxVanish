@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.incendo.cloud.bukkit.parser.OfflinePlayerParser;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.PaperCommandManager;
+import org.incendo.cloud.setting.ManagerSetting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,7 @@ public final class AxVanishCommand {
             manager = PaperCommandManager.builder()
                     .executionCoordinator(ExecutionCoordinator.simpleCoordinator())
                     .buildOnEnable(this.plugin);
+            manager.settings().set(ManagerSetting.OVERRIDE_EXISTING_COMMANDS, true);
         } catch (Exception e) {
             LogUtils.error("Failed to initialize command manager", e);
             return;
