@@ -6,6 +6,7 @@ import com.artillexstudios.axapi.utils.mutable.MutableInteger;
 import com.artillexstudios.axvanish.api.AxVanishAPI;
 import com.artillexstudios.axvanish.api.users.User;
 import com.artillexstudios.axvanish.config.Config;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -72,11 +73,19 @@ public final class VanishStateManager {
                 LogUtils.debug("Can {} see {}: {}", onlinePlayer.getName(), player.getName(), online.canSee(this.user));
             }
             if (online.canSee(this.user)) {
+                if (!Bukkit.isOwnedByCurrentRegion(onlinePlayer)) {
+                    return;
+                }
+
                 Scheduler.get().run(onlinePlayer, task -> {
                     onlinePlayer.showPlayer(this.plugin, player);
                     this.count(playerCounter, counter);
                 }, retired);
             } else {
+                if (!Bukkit.isOwnedByCurrentRegion(onlinePlayer)) {
+                    return;
+                }
+
                 Scheduler.get().run(onlinePlayer, task -> {
                     onlinePlayer.hidePlayer(this.plugin, player);
                     this.count(playerCounter, counter);
@@ -87,13 +96,21 @@ public final class VanishStateManager {
                 LogUtils.debug("Can {} see {}: {}", player.getName(), onlinePlayer.getName(), this.user.canSee(online));
             }
             if (this.user.canSee(online)) {
-                Scheduler.get().run(onlinePlayer, task -> {
+                if (!Bukkit.isOwnedByCurrentRegion(player)) {
+                    return;
+                }
+
+                Scheduler.get().run(player, task -> {
                     player.showPlayer(this.plugin, onlinePlayer);
                     this.count(playerCounter, counter);
                 }, retired);
             } else {
-                Scheduler.get().run(onlinePlayer, task -> {
-                    player.hideEntity(this.plugin, onlinePlayer);
+                if (!Bukkit.isOwnedByCurrentRegion(player)) {
+                    return;
+                }
+
+                Scheduler.get().run(player, task -> {
+                    player.hidePlayer(this.plugin, onlinePlayer);
                     this.count(playerCounter, counter);
                 }, retired);
             }
