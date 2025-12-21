@@ -14,6 +14,8 @@ import com.artillexstudios.axvanish.config.Language;
 import com.artillexstudios.axvanish.exception.UserAlreadyLoadedException;
 import com.artillexstudios.axvanish.users.Users;
 import com.artillexstudios.axvanish.utils.PermissionUtils;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import com.artillexstudios.axapi.utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -82,7 +84,8 @@ public final class PlayerListener implements Listener {
                     .build()
             );
 
-            AxVanishAPI.instance().broadcast(user, Language.prefix + Language.unVanish.hadNoVanishPermission);
+            AxVanishAPI.instance().online().stream().filter(other -> other.canSee(user)).forEach(other ->
+                  MessageUtils.sendMessage(other.onlinePlayer(), Language.prefix, Language.unVanish.hadNoVanishPermission, Placeholder.unparsed("player", player.getName())));
             return;
         }
 
