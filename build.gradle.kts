@@ -33,7 +33,7 @@ subprojects {
     }
 
     dependencies {
-        implementation("com.artillexstudios.axapi:axapi:1.4.802:all")
+        implementation("com.artillexstudios.axapi:axapi:1.4.830:all")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.2")
         compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
         compileOnly("org.incendo:cloud-paper:2.0.0-beta.13")
